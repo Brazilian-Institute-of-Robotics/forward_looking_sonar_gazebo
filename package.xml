@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>gazebo_ros_sonar_plugin</name>
+  <version>0.0.0</version>
+  <description>Sonar Package based on ROCKY package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="ivan.tarifa@fieb.org.br">ivan</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+
+  <depend>uuv_descriptions</depend>
+  <depend>uuv_sensor_ros_plugins</depend>
+  <depend>uuv_gazebo_ros_plugins</depend>
+  <depend>gazebo</depend>
+  <depend>gazebo_plugins</depend>
+  
+
+  <build_depend>roslint</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
