@@ -20,7 +20,6 @@ catkin_package(
     ${GAZEBO_MSG_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
-  CATKIN_DEPENDS geometry_msgs
 )
 
 include_directories(
@@ -41,10 +40,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 set(ROSLINT_CPP_OPTS "--extensions=hpp,cpp,c,hh,cc,h")
 
 set(GAZEBO_ROS_SONAR_PLUGIN_SRCS
-  src/)
+  src/Sonar.cc)
+ # src/ImageViewerCaptureTool.cc
+ # src/NormalDepthMap.cc
+ # src/Tools.cc)
 
 set(GAZEBO_ROS_SONAR_PLUGIN_HEADERS
-  include/${PROJECT_NAME}/)
+ include/${PROJECT_NAME}/SonarPrivate.hh 
+ include/${PROJECT_NAME}/Sonar.hh)
+ # include/${PROJECT_NAME}/ImageViewerCaptureTool.hh
+ # include/${PROJECT_NAME}/NormalDepthMap.hh
+ # include/${PROJECT_NAME}/Tools.hh)
 
 roslint_cpp()
 
@@ -69,6 +75,27 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 # Install urdf files
-install(DIRECTORY urdf
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-  PATTERN "*~" EXCLUDE)
+#install(DIRECTORY urdf
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+#  PATTERN "*~" EXCLUDE)
+
+
+if (CATKIN_ENABLE_TESTING)
+  find_package(cmake_modules)
+  find_package(rostest REQUIRED)
+  find_package(TinyXML REQUIRED)
+
+  include_directories(include ${catkin_INCLUDE_DIRS}
+    ${GAZEBO_INCLUDE_DIRS}
+    ${TinyXML_INCLUDE_DIRS})
+
+  ############# LINEAR FORCE TESTS ###########################
+  add_rostest_gtest(sonar_test
+    test/sonar.test
+    test/src/Sonar_TEST.cc)
+
+  target_link_libraries(sonar_test ${catkin_LIBRARIES}
+    SonarPlugin ${TinyXML_LIBRARIES})
+
+  roslint_add_test()
+endif()
