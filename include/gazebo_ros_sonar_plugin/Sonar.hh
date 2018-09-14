@@ -262,7 +262,7 @@ namespace gazebo
       public: void SetRayCountRatio(const double _rayCountRatio);
 
       // Documentation inherited.
-      private: virtual void RenderImpl();
+      public: virtual void RenderImpl();
 
       /// \brief Update a render target.
       /// \param[in, out] _target Render target to update (render).
@@ -337,6 +337,14 @@ namespace gazebo
 
       /// \brief Number of cameras needed to generate the rays.
       protected: unsigned int cameraCount;
+
+      public: Ogre::Camera *MyCam;
+      public: Ogre::SceneNode *MyCamNode;
+      public: void CreateMyCam();
+      public: Ogre::Texture* MyCamTex;
+      public: Ogre::Material *MyCamMaterial;
+      public: Ogre::RenderTarget *MyCamTarget;
+      public: void PrintToFile(float _width,int _height, Ogre::Texture* _inTex);
 
       /// \internal
       /// \brief Pointer to private data.

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Loading concept -->
+  <xacro:property name="concept" value="magnet_test"/>
+  <!-- Loading vehicle's specific macros -->
+  <xacro:include filename="$(find  gazebo_ros_sonar_plugin)/xacro/snippets_${concept}.xacro"/>
+  <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <!--
+    Vehicle's parameters (remember to enter the model parameters below)
+  -->
+  <xacro:property name="visual_mesh_file" value="file://$(find  gazebo_ros_sonar_plugin)/meshes/Body_${concept}.stl"/>
+  <!-- Loading the UUV simulator ROS plugin macros -->
+  <xacro:property name="mass" value="1000"/>
+  <xacro:property name="cog" value="0 0 0"/>
+  <!-- Fluid density -->
+  <xacro:property name="rho" value="1028"/>
+  <!-- Vehicle macro -->
+  <xacro:macro name="mccr_base" params="namespace *gazebo">
+    <!-- Rigid body description of the base link -->
+    <link name="${namespace}/base_link">
+      <!--
+          Be careful to setup the coefficients for the inertial tensor,
+          otherwise your model will become unstable on Gazebo
+        -->
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="${cog}" rpy="0 0 0"/>
+        <inertia ixx="100" ixy="0.001" ixz="0.001" iyy="100" iyz="0.001" izz="1000"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.4 0.8 0.1"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="${cog}" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.4 0.8 0.1"/>
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="${namespace}/base_link">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+    <!-- Set up hydrodynamic plugin given as input parameter -->
+    <xacro:insert_block name="gazebo"/>
+    <!-- Include the thruster modules -->
+    <xacro:include filename="$(find gazebo_ros_sonar_plugin)/xacro/actuators_magnet_test.xacro"/>
+    <!-- Include the sensor modules -->
+    <xacro:include filename="$(find gazebo_ros_sonar_plugin)/xacro/sensors_magnet_test.xacro"/>
+  </xacro:macro>
+</robot>

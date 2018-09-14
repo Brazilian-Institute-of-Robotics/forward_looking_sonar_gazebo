@@ -104,12 +104,14 @@ Sonar::~Sonar()
 void Sonar::Load(sdf::ElementPtr _sdf)
 {
   Camera::Load(_sdf);
+
 }
 
 //////////////////////////////////////////////////
 void Sonar::Load()
 {
   Camera::Load();
+  this->captureData=true;
 }
 
 //////////////////////////////////////////////////
@@ -162,12 +164,17 @@ void Sonar::CreateLaserTexture(const std::string &_textureName)
 
     this->Set1stPassTarget(
         this->dataPtr->firstPassTextures[i]->getBuffer()->getRenderTarget(), i);
+<<<<<<< HEAD
+>>>>>>> 3db1d56... Modification of main class to sonar
+=======
+>>>>>>> 7c8862b... 2
 
     this->dataPtr->firstPassTargets[i]->setAutoUpdated(false);
   }
 
   this->dataPtr->matFirstPass = (Ogre::Material*)(
   Ogre::MaterialManager::getSingleton().getByName("Gazebo/LaserScan1st").get());
+
 
   this->dataPtr->matFirstPass->load();
   this->dataPtr->matFirstPass->setCullingMode(Ogre::CULL_NONE);
@@ -215,6 +222,67 @@ void Sonar::CreateLaserTexture(const std::string &_textureName)
   }
 
   this->CreateCanvas();
+  this->newData = true;
+<<<<<<< HEAD
+>>>>>>> 3db1d56... Modification of main class to sonar
+=======
+
+
+  MyCamTex = Ogre::TextureManager::getSingleton().createManual(
+    "RttTex", 
+    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+    Ogre::TEX_TYPE_2D, 
+    720, 720, 
+    0, 
+    Ogre::PF_R8G8B8 , 
+    Ogre::TU_RENDERTARGET).getPointer();
+  this->MyCamTarget = MyCamTex->getBuffer()->getRenderTarget();
+  this->MyCamTarget->addViewport(this->MyCam);
+  this->MyCamTarget->getViewport(0)->setClearEveryFrame(true);
+  this->MyCamTarget->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
+  this->MyCamTarget->getViewport(0)->setOverlaysEnabled(false);
+  this->MyCamTarget->getViewport(0)->setShadowsEnabled(false);
+  this->MyCamTarget->getViewport(0)->setSkiesEnabled(false);
+  this->MyCamTarget->getViewport(0)->setVisibilityMask(GZ_VISIBILITY_ALL  & ~(GZ_VISIBILITY_GUI | GZ_VISIBILITY_SELECTABLE));
+
+  this->MyCamMaterial = (Ogre::Material*)(
+    Ogre::MaterialManager::getSingleton().getByName("GazeboRosSonar/NormalDepthMap").get());
+  this->MyCamMaterial->load();
+
+  {Ogre::Technique *technique = this->MyCamMaterial->getTechnique(0);
+  GZ_ASSERT(technique, "Sonar material script error: technique not found");
+
+  Ogre::Pass *pass = technique->getPass(0);
+  GZ_ASSERT(pass, "Sonar material script error: pass not found");
+  GZ_ASSERT(pass->hasVertexProgram(),"Must have vertex program");
+  GZ_ASSERT(pass->hasFragmentProgram(),"Must have vertex program");}
+}
+
+void Sonar::PrintToFile(float _width,int _height, Ogre::Texture* _inTex)
+{
+  Ogre::HardwarePixelBufferSharedPtr pixelBuffer;
+  pixelBuffer = _inTex->getBuffer();
+  size_t size = Ogre::PixelUtil::getMemorySize(
+                    _width, _height, 1, Ogre::PF_FLOAT32_RGB);
+
+  uint8_t *imageBuffer = new uint8_t[size];
+  memset(imageBuffer, 255, size);
+  Ogre::PixelBox dstBox(_width, _height,
+    1, Ogre::PF_R8G8B8 , imageBuffer);
+
+
+  pixelBuffer->blitToMemory(dstBox);
+
+  FILE* imageFile;
+  imageFile = fopen("Teste2.date","w");
+  for (int i = 0 ; i < _width*_height;i++)
+  {
+    fprintf(imageFile,"%u : %u %u %u \n",i,imageBuffer[i*3],
+      imageBuffer[i*3+1],imageBuffer[i*3+2]);
+  }
+  fclose(imageFile);
+
+>>>>>>> 7c8862b... 2
 }
 
 //////////////////////////////////////////////////
@@ -227,19 +295,27 @@ void Sonar::PostRender()
 
   this->dataPtr->secondPassTarget->swapBuffers();
 
-  if (this->newData && this->captureData)
+  //if (this->newData && this->captureData)
   {
     Ogre::HardwarePixelBufferSharedPtr pixelBuffer;
+    Ogre::HardwarePixelBufferSharedPtr pixelBufferF0;
 
     unsigned int width = this->dataPtr->secondPassViewport->getActualWidth();
     unsigned int height = this->dataPtr->secondPassViewport->getActualHeight();
 
+    unsigned int widthF0 = this->dataPtr->firstPassViewports[0]->getActualWidth();
+    unsigned int heightF0 = this->dataPtr->firstPassViewports[0]->getActualHeight();
+
     // Get access to the buffer and make an image and write it to file
     pixelBuffer = this->dataPtr->secondPassTexture->getBuffer();
+    pixelBufferF0 = this->dataPtr->firstPassTextures[0]->getBuffer();
 
     size_t size = Ogre::PixelUtil::getMemorySize(
                     width, height, 1, Ogre::PF_FLOAT32_RGB);
+    size_t sizeF0 = Ogre::PixelUtil::getMemorySize(
+                    widthF0, heightF0, 1, Ogre::PF_FLOAT32_RGB);
 
+    
     // Blit the depth buffer if needed
     if (!this->dataPtr->laserBuffer)
       this->dataPtr->laserBuffer = new float[size];
@@ -250,6 +326,39 @@ void Sonar::PostRender()
         1, Ogre::PF_FLOAT32_RGB, this->dataPtr->laserBuffer);
 
     pixelBuffer->blitToMemory(dstBox);
+
+    // Fist Blit
+    float *laserBufferF0 = new float[sizeF0];
+    memset(laserBufferF0, 255, size);
+    Ogre::PixelBox dstBoxF0(widthF0, heightF0,
+        1, Ogre::PF_FLOAT32_RGB, laserBufferF0);
+
+
+    pixelBufferF0->blitToMemory(dstBoxF0);
+
+    FILE* imageFile;
+    imageFile = fopen("Teste.date","w");
+    for (int i = 0 ; i < widthF0*heightF0;i++)
+    {
+      fprintf(imageFile,"%u : %f %f %f \n",i,laserBufferF0[i*3],
+        laserBufferF0[i*3+1],laserBufferF0[i*3+2]);
+    }
+    fclose(imageFile);
+
+
+
+    // Setup Image with correct settings
+    // gzwarn << "Texture size " << size << std::endl;
+    // Ogre::Image* img = new Ogre::Image();
+    // // fill array
+    // img->loadDynamicImage( reinterpret_cast<Ogre::uchar*>(laserBufferF0), widthF0, heightF0, 1, Ogre::PF_FLOAT32_RGBA, true );
+    // img->save("test.png");
+
+    
+    Ogre::Image img;
+    this->dataPtr->firstPassTextures[0]->convertToImage(img);    
+    img.save("test.png");
+
 
     if (!this->dataPtr->laserScan)
     {
@@ -266,6 +375,9 @@ void Sonar::PostRender()
   }
 
   this->newData = false;
+  // gzwarn << "--------------------Starte-----------------" << std::endl;
+  //this->GetScene()->PrintSceneGraph();
+  // gzwarn << "---------------------------ENDED--------------" << std::endl;
 }
 
 /////////////////////////////////////////////////
@@ -362,32 +474,43 @@ void Sonar::notifyRenderSingleObject(Ogre::Renderable *_rend,
   Ogre::Vector4 retro = Ogre::Vector4(0, 0, 0, 0);
   try
   {
-    retro = _rend->getCustomParameter(1);
+    _rend->setCustomParameter(1, Ogre::Vector4(0, 0, 0, 0));//retro = _rend->getCustomParameter(1);
   }
   catch(Ogre::ItemIdentityException& e)
   {
     _rend->setCustomParameter(1, Ogre::Vector4(0, 0, 0, 0));
   }
 
-  Ogre::Pass *pass = this->dataPtr->currentMat->getBestTechnique()->getPass(0);
+  Ogre::Pass *pass = this->MyCamMaterial->getBestTechnique()->getPass(0);
+  // Ogre::Pass *pass = this->dataPtr->currentMat->getBestTechnique()->getPass(0);
+
   Ogre::RenderSystem *renderSys =
                   this->scene->OgreSceneManager()->getDestinationRenderSystem();
 
   Ogre::AutoParamDataSource autoParamDataSource;
 
-  Ogre::Viewport *vp = this->dataPtr->currentTarget->getViewport(0);
+  // Ogre::Viewport *vp = this->dataPtr->currentTarget->getViewport(0);
+  Ogre::Viewport *vp = this->MyCamTarget->getViewport(0);
 
   renderSys->_setViewport(vp);
   autoParamDataSource.setCurrentRenderable(_rend);
   autoParamDataSource.setCurrentPass(pass);
   autoParamDataSource.setCurrentViewport(vp);
-  autoParamDataSource.setCurrentRenderTarget(this->dataPtr->currentTarget);
+  // autoParamDataSource.setCurrentRenderTarget(this->dataPtr->currentTarget);
+  autoParamDataSource.setCurrentRenderTarget(this->MyCamTarget);
   autoParamDataSource.setCurrentSceneManager(this->scene->OgreSceneManager());
   autoParamDataSource.setCurrentCamera(this->camera, true);
 
   pass->_updateAutoParams(&autoParamDataSource,
       Ogre::GPV_GLOBAL || Ogre::GPV_PER_OBJECT);
-  pass->getFragmentProgramParameters()->setNamedConstant("retro", retro[0]);
+  // pass->getFragmentProgramParameters()->setNamedConstant("retro", retro[0]);
+
+  pass->getFragmentProgramParameters()->setNamedConstant("farPlane", float(5.0f));
+  pass->getFragmentProgramParameters()->setNamedConstant("drawNormal", int(1));
+  pass->getFragmentProgramParameters()->setNamedConstant("drawDepth", int(1));
+  pass->getFragmentProgramParameters()->setNamedConstant("reflectance", 1.0f);
+  pass->getFragmentProgramParameters()->setNamedConstant("attenuationCoeff", 0.0f);
+
   renderSys->bindGpuProgram(
       pass->getVertexProgram()->_getBindingDelegate());
 
@@ -432,10 +555,12 @@ void Sonar::RenderImpl()
     this->dataPtr->firstPassTargets[i]->update(false);
   }
 
+  gzwarn << " Camera Yaw " << this->dataPtr->cameraYaws[3] << std::endl;
   if (this->dataPtr->textureCount > 1)
       this->sceneNode->roll(Ogre::Radian(this->dataPtr->cameraYaws[3]));
 
   sceneMgr->removeRenderObjectListener(this);
+
 
   double firstPassDur = firstPassTimer.GetElapsed().Double();
   secondPassTimer.Start();
@@ -451,7 +576,33 @@ void Sonar::RenderImpl()
   sceneMgr->_suppressRenderStateChanges(false);
 
   double secondPassDur = secondPassTimer.GetElapsed().Double();
+  
+
   this->dataPtr->lastRenderDuration = firstPassDur + secondPassDur;
+
+  // this->GetScene()->WorldVisual()->SetVisible(true);
+  // this->GetScene()->WorldVisual()->GetSceneNode()->setVisible(true,true);
+  // this->scene->SetVisible("default",true);
+
+  // gzwarn<< "Is visible: " << this->GetScene()->WorldVisual()->GetVisible() << std::endl;
+  // this->GetScene()->WorldVisual()->ShowInertia(true);
+  // gzwarn << "Scene Name " << this->scene->Name() << std::endl;
+
+
+  sceneMgr->addRenderObjectListener(this);
+  this->UpdateRenderTarget(this->MyCamTarget,
+                  this->MyCamMaterial, this->MyCam,false);
+  // this->MyCamTex->getBuffer()->getRenderTarget()->update(false);
+  // Ogre::RenderTexture* renderTexture = MyCamTex->getBuffer()->getRenderTarget();
+  this->MyCamTarget->update();
+  this->MyCamTarget->writeContentsToFile("start.png");
+  Ogre::Image img;
+  this->MyCamTex->convertToImage(img);    
+  img.save("MyCamtest.png");
+  this->PrintToFile(720,720, this->MyCamTex);
+  sceneMgr->removeRenderObjectListener(this);
+
+
 }
 
 //////////////////////////////////////////////////
@@ -496,6 +647,47 @@ void Sonar::CreateOrthoCam()
   }
 }
 
+void Sonar::CreateMyCam()
+{
+
+
+  this->MyCamNode = this->GetScene()->WorldVisual()->GetSceneNode()->createChildSceneNode("my_sonar");
+  
+  
+
+  //this->MyCamNode = this->scene->OgreSceneManager()->getSceneNode("car_sonar");
+  this->MyCam = this->scene->OgreSceneManager()->createCamera("myCam");
+  this->MyCamNode->setPosition(2, 2, 2);
+  this->MyCamNode->lookAt(Ogre::Vector3(0, 0, 1), Ogre::Node::TransformSpace::TS_WORLD);
+  this->MyCam->setNearClipDistance(0.01);
+  this->MyCamNode->attachObject(this->MyCam);
+
+  //this->scene->OgreSceneManager()->setDisplaySceneNodes(true);
+
+
+  //common::MeshManager::Instance()->CreateSphere("contact_sphere", 0.5, 10, 10);
+
+  //Add the mesh into OGRE
+  // if (!this->MyCamNode->getCreator()->hasEntity("contact_sphere") &&
+  //     common::MeshManager::Instance()->HasMesh("contact_sphere"))
+  // {
+  //   const common::Mesh *mesh =
+  //     common::MeshManager::Instance()->GetMesh("contact_sphere");
+  //   this->GetScene()->WorldVisual()->InsertMesh(mesh);
+  // }
+
+  // Ogre::Entity *obj = this->scene->OgreSceneManager()->createEntity(
+  //                   "VISUAL__bal", "contact_sphere");
+
+
+  // obj->setMaterialName("Gazebo/Blue");
+  // obj->setVisibilityFlags(GZ_VISIBILITY_ALL);
+
+  // this->MyCamNode->attachObject(obj);
+  this->MyCamNode->setVisible(true);
+
+}
+
 /////////////////////////////////////////////////
 Ogre::Matrix4 Sonar::BuildScaledOrthoMatrix(const float _left,
     const float _right, const float _bottom, const float _top,
@@ -535,7 +727,7 @@ void Sonar::Set1stPassTarget(Ogre::RenderTarget *_target,
     this->dataPtr->firstPassViewports[_index]->setBackgroundColour(
         Ogre::ColourValue(this->farClip, 0.0, 1.0));
     this->dataPtr->firstPassViewports[_index]->setVisibilityMask(
-        GZ_VISIBILITY_ALL & ~(GZ_VISIBILITY_GUI | GZ_VISIBILITY_SELECTABLE));
+        GZ_VISIBILITY_ALL );
   }
 
   if (_index == 0)
@@ -717,7 +909,7 @@ void Sonar::CreateCanvas()
 
   this->dataPtr->visual->AttachObject(this->dataPtr->object);
   this->dataPtr->object->setVisibilityFlags(GZ_VISIBILITY_ALL
-      & ~GZ_VISIBILITY_SELECTABLE);
+  );
 
   ignition::math::Pose3d pose;
   pose.Pos() = ignition::math::Vector3d(0.01, 0, 0);

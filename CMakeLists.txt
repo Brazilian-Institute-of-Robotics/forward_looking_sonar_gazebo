@@ -8,7 +8,7 @@ set(GAZEBO_ODE_INCLUDE_DIRS "${GAZEBO_ODE_INCLUDE_DIRS}/gazebo")
 find_package(catkin REQUIRED COMPONENTS roslint
   )
 
-find_package(gazebo REQUIRED)
+find_package(GAZEBO REQUIRED)
 find_package(Boost REQUIRED)
 
 set(GAZEBO_ROS_SONAR_PLUGIN "")
@@ -32,15 +32,20 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-link_directories(
-  ${GAZEBO_LIBRARY_DIRS}
-)
+#link_directories(
+#  ${GAZEBO_LIBRARY_DIRS}
+#)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 set(ROSLINT_CPP_OPTS "--extensions=hpp,cpp,c,hh,cc,h")
 
 set(GAZEBO_ROS_SONAR_PLUGIN_SRCS
-  src/Sonar.cc)
+  src/Sonar.cc
+  src/SensorPlugin.cc)
+<<<<<<< HEAD
+>>>>>>> 3db1d56... Modification of main class to sonar
+=======
+>>>>>>> 7c8862b... 2
  # src/ImageViewerCaptureTool.cc
  # src/NormalDepthMap.cc
  # src/Tools.cc)
@@ -57,10 +62,10 @@ roslint_cpp()
 roslint_cpp(${GAZEBO_ROS_SONAR_PLUGIN_SRCS}
   ${GAZEBO_ROS_SONAR_PLUGIN_HEADERS})
 
-add_library(SonarPlugin ${GAZEBO_ROS_SONAR_PLUGIN_SRCS})
-target_link_libraries(SonarPlugin ${catkin_LIBRARIES})
-add_dependencies(SonarPlugin ${catkin_EXPORTED_TARGETS})
-list(APPEND GAZEBO_ROS_SONAR_PLUGIN_LIST SonarPlugin)
+add_library(SonarVisual ${GAZEBO_ROS_SONAR_PLUGIN_SRCS})
+target_link_libraries(SonarVisual ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+add_dependencies(SonarVisual ${catkin_EXPORTED_TARGETS})
+list(APPEND GAZEBO_ROS_SONAR_PLUGIN_LIST SonarVisual)
 
 install(TARGETS ${GAZEBO_ROS_SONAR_PLUGIN_LIST}
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -84,6 +89,7 @@ if (CATKIN_ENABLE_TESTING)
   find_package(cmake_modules)
   find_package(rostest REQUIRED)
   find_package(TinyXML REQUIRED)
+  find_package(GAZEBO REQUIRED)
 
   include_directories(include ${catkin_INCLUDE_DIRS}
     ${GAZEBO_INCLUDE_DIRS}
@@ -91,11 +97,11 @@ if (CATKIN_ENABLE_TESTING)
 
   ############# LINEAR FORCE TESTS ###########################
   add_rostest_gtest(sonar_test
-    test/sonar.test
-    test/src/Sonar_TEST.cc)
+    test/sonar_test.test
+    test/Sonar_TEST.cc)
 
   target_link_libraries(sonar_test ${catkin_LIBRARIES}
-    SonarPlugin ${TinyXML_LIBRARIES})
-
+    SonarPlugin ${GAZEBO_LIBRARIES})
+  #message(FATAL_ERROR "${GAZEBO_LIBRARIES}")
   roslint_add_test()
 endif()
