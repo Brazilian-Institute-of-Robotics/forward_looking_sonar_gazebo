@@ -288,93 +288,7 @@ void Sonar::PrintToFile(float _width,int _height, Ogre::Texture* _inTex)
 //////////////////////////////////////////////////
 void Sonar::PostRender()
 {
-  for (unsigned int i = 0; i < this->dataPtr->textureCount; ++i)
-  {
-    this->dataPtr->firstPassTargets[i]->swapBuffers();
-  }
 
-  this->dataPtr->secondPassTarget->swapBuffers();
-
-  //if (this->newData && this->captureData)
-  {
-    Ogre::HardwarePixelBufferSharedPtr pixelBuffer;
-    Ogre::HardwarePixelBufferSharedPtr pixelBufferF0;
-
-    unsigned int width = this->dataPtr->secondPassViewport->getActualWidth();
-    unsigned int height = this->dataPtr->secondPassViewport->getActualHeight();
-
-    unsigned int widthF0 = this->dataPtr->firstPassViewports[0]->getActualWidth();
-    unsigned int heightF0 = this->dataPtr->firstPassViewports[0]->getActualHeight();
-
-    // Get access to the buffer and make an image and write it to file
-    pixelBuffer = this->dataPtr->secondPassTexture->getBuffer();
-    pixelBufferF0 = this->dataPtr->firstPassTextures[0]->getBuffer();
-
-    size_t size = Ogre::PixelUtil::getMemorySize(
-                    width, height, 1, Ogre::PF_FLOAT32_RGB);
-    size_t sizeF0 = Ogre::PixelUtil::getMemorySize(
-                    widthF0, heightF0, 1, Ogre::PF_FLOAT32_RGB);
-
-    
-    // Blit the depth buffer if needed
-    if (!this->dataPtr->laserBuffer)
-      this->dataPtr->laserBuffer = new float[size];
-
-    memset(this->dataPtr->laserBuffer, 255, size);
-
-    Ogre::PixelBox dstBox(width, height,
-        1, Ogre::PF_FLOAT32_RGB, this->dataPtr->laserBuffer);
-
-    pixelBuffer->blitToMemory(dstBox);
-
-    // Fist Blit
-    float *laserBufferF0 = new float[sizeF0];
-    memset(laserBufferF0, 255, size);
-    Ogre::PixelBox dstBoxF0(widthF0, heightF0,
-        1, Ogre::PF_FLOAT32_RGB, laserBufferF0);
-
-
-    pixelBufferF0->blitToMemory(dstBoxF0);
-
-    FILE* imageFile;
-    imageFile = fopen("Teste.date","w");
-    for (int i = 0 ; i < widthF0*heightF0;i++)
-    {
-      fprintf(imageFile,"%u : %f %f %f \n",i,laserBufferF0[i*3],
-        laserBufferF0[i*3+1],laserBufferF0[i*3+2]);
-    }
-    fclose(imageFile);
-
-
-
-    // Setup Image with correct settings
-    // gzwarn << "Texture size " << size << std::endl;
-    // Ogre::Image* img = new Ogre::Image();
-    // // fill array
-    // img->loadDynamicImage( reinterpret_cast<Ogre::uchar*>(laserBufferF0), widthF0, heightF0, 1, Ogre::PF_FLOAT32_RGBA, true );
-    // img->save("test.png");
-
-    
-    Ogre::Image img;
-    this->dataPtr->firstPassTextures[0]->convertToImage(img);    
-    img.save("test.png");
-
-
-    if (!this->dataPtr->laserScan)
-    {
-      int len = this->dataPtr->w2nd * this->dataPtr->h2nd * 3;
-      this->dataPtr->laserScan = new float[len];
-    }
-
-    memcpy(this->dataPtr->laserScan, this->dataPtr->laserBuffer,
-           this->dataPtr->w2nd * this->dataPtr->h2nd * 3 *
-           sizeof(this->dataPtr->laserScan[0]));
-
-    this->dataPtr->newLaserFrame(this->dataPtr->laserScan, this->dataPtr->w2nd,
-        this->dataPtr->h2nd, 3, "BLABLA");
-  }
-
-  this->newData = false;
   // gzwarn << "--------------------Starte-----------------" << std::endl;
   //this->GetScene()->PrintSceneGraph();
   // gzwarn << "---------------------------ENDED--------------" << std::endl;
@@ -421,20 +335,6 @@ void Sonar::UpdateRenderTarget(Ogre::RenderTarget *_target,
 #else
   pass->_updateAutoParams(&autoParamDataSource, 1);
 #endif
-
-  if (_updateTex)
-  {
-    pass->getFragmentProgramParameters()->setNamedConstant("tex1",
-      this->dataPtr->texIdx[0]);
-    if (this->dataPtr->texIdx.size() > 1)
-    {
-      pass->getFragmentProgramParameters()->setNamedConstant("tex2",
-        this->dataPtr->texIdx[1]);
-      if (this->dataPtr->texIdx.size() > 2)
-        pass->getFragmentProgramParameters()->setNamedConstant("tex3",
-          this->dataPtr->texIdx[2]);
-    }
-  }
 
   // NOTE: We MUST bind parameters AFTER updating the autos
   if (pass->hasVertexProgram())
@@ -499,7 +399,7 @@ void Sonar::notifyRenderSingleObject(Ogre::Renderable *_rend,
   // autoParamDataSource.setCurrentRenderTarget(this->dataPtr->currentTarget);
   autoParamDataSource.setCurrentRenderTarget(this->MyCamTarget);
   autoParamDataSource.setCurrentSceneManager(this->scene->OgreSceneManager());
-  autoParamDataSource.setCurrentCamera(this->camera, true);
+  autoParamDataSource.setCurrentCamera(this->MyCam, true);
 
   pass->_updateAutoParams(&autoParamDataSource,
       Ogre::GPV_GLOBAL || Ogre::GPV_PER_OBJECT);
@@ -535,58 +435,15 @@ void Sonar::RenderImpl()
 
   Ogre::SceneManager *sceneMgr = this->scene->OgreSceneManager();
 
-  sceneMgr->_suppressRenderStateChanges(true);
-  sceneMgr->addRenderObjectListener(this);
 
-  for (unsigned int i = 0; i < this->dataPtr->textureCount; ++i)
-  {
-    if (this->dataPtr->textureCount > 1)
-    {
-      // Cannot call Camera::RotateYaw because it rotates in world frame,
-      // but we need rotation in camera local frame
-      this->sceneNode->roll(Ogre::Radian(this->dataPtr->cameraYaws[i]));
-    }
+  Ogre::RenderSystem *renderSys;
+  renderSys = this->scene->OgreSceneManager()->getDestinationRenderSystem();
 
-    this->dataPtr->currentMat = this->dataPtr->matFirstPass;
-    this->dataPtr->currentTarget = this->dataPtr->firstPassTargets[i];
+  renderSys->_setViewport(this->dataPtr->firstPassTargets[0]->getViewport(0));
 
-    this->UpdateRenderTarget(this->dataPtr->firstPassTargets[i],
-                  this->dataPtr->matFirstPass, this->camera);
-    this->dataPtr->firstPassTargets[i]->update(false);
-  }
-
-  gzwarn << " Camera Yaw " << this->dataPtr->cameraYaws[3] << std::endl;
-  if (this->dataPtr->textureCount > 1)
-      this->sceneNode->roll(Ogre::Radian(this->dataPtr->cameraYaws[3]));
-
-  sceneMgr->removeRenderObjectListener(this);
 
 
   double firstPassDur = firstPassTimer.GetElapsed().Double();
-  secondPassTimer.Start();
-
-  this->dataPtr->visual->SetVisible(true);
-
-  this->UpdateRenderTarget(this->dataPtr->secondPassTarget,
-                this->dataPtr->matSecondPass, this->dataPtr->orthoCam, true);
-  this->dataPtr->secondPassTarget->update(false);
-
-  this->dataPtr->visual->SetVisible(false);
-
-  sceneMgr->_suppressRenderStateChanges(false);
-
-  double secondPassDur = secondPassTimer.GetElapsed().Double();
-  
-
-  this->dataPtr->lastRenderDuration = firstPassDur + secondPassDur;
-
-  // this->GetScene()->WorldVisual()->SetVisible(true);
-  // this->GetScene()->WorldVisual()->GetSceneNode()->setVisible(true,true);
-  // this->scene->SetVisible("default",true);
-
-  // gzwarn<< "Is visible: " << this->GetScene()->WorldVisual()->GetVisible() << std::endl;
-  // this->GetScene()->WorldVisual()->ShowInertia(true);
-  // gzwarn << "Scene Name " << this->scene->Name() << std::endl;
 
 
   sceneMgr->addRenderObjectListener(this);

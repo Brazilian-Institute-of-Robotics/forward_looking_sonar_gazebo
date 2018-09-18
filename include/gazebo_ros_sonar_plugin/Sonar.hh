@@ -274,6 +274,11 @@ namespace gazebo
                                        Ogre::Camera *_cam,
                                        const bool _updateTex = false);
 
+      private: void UpdateRenderTarget2(Ogre::RenderTarget *_target,
+                                       Ogre::Material *_material,
+                                       Ogre::Camera *_cam,
+                                       const bool _updateTex = false);
+
       /// \brief Create an ortho camera.
       private: void CreateOrthoCam();
 
