@@ -19,11 +19,11 @@ void main() {
     vec3 normNormal;
 
     // // Normal for textured scenes (by normal mapping)
-    // if (textureSize(normalTexture, 0).x > 1) {
-    //     vec3 normalRGB = texture2D(normalTexture, gl_TexCoord[0].xy).rgb;
-    //     vec3 normalMap = (normalRGB * 2.0 - 1.0) * TBN;
-    //     normNormal = normalize(normalMap);
-    // }
+    if (textureSize(normalTexture, 0).x > 1) {
+      vec3 normalRGB = texture2D(normalTexture, gl_TexCoord[0].xy).rgb;
+      vec3 normalMap = (normalRGB * 2.0 - 1.0) * TBN;
+      normNormal = normalize(normalMap);
+    }
 
     // // Normal for untextured scenes
     // else
@@ -46,6 +46,7 @@ void main() {
         if (drawNormal==1){
             float value = dot(normPosition, normNormal);
             out_data.zw = vec2( abs(value), 1.0);
+            //out_data.zw = vec2( 1.0, 1.0);
         }
         if (drawDepth==1)
             out_data.yw = vec2(linearDepth, 1.0);

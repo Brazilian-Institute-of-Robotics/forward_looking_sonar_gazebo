@@ -1,35 +1,3 @@
-vertex_program GazeboRosSonar/LaserScan1stVS glsl
-{
-  source my_laser_1st_pass.vert
-}
-
-fragment_program GazeboRosSonar/LaserScan1stFS glsl
-{
-  source my_laser_1st_pass.frag
-
-  default_params
-  {
-    param_named retro float 0.0
-    param_named_auto near near_clip_distance
-    param_named_auto far far_clip_distance
-  }
-}
-
-
-material GazeboRosSonar/LaserScan1st
-{
-  technique
-  {
-    pass my_laser_tex
-    {
-      separate_scene_blend one zero one zero
-
-      vertex_program_ref GazeboRosSonar/LaserScan1stVS { }
-      fragment_program_ref GazeboRosSonar/LaserScan1stFS { }
-    }
-  }
-}
-
 vertex_program GazeboRosSonar/NormalDepthMapVS glsl
 {
   source normal_depth_map.vert

@@ -21,11 +21,18 @@
   <depend>uuv_gazebo_ros_plugins</depend>
   <depend>gazebo</depend>
   <depend>gazebo_plugins</depend>
+  <depend>cv_bridge</depend>
 
   <exec_depend>gazebo_ros</exec_depend>
-  
+  <exec_depend>opencv3</exec_depend>
 
+  <test_depend>rosunit</test_depend>
+  <test_depend>rostest</test_depend>
+  
+  <build_depend>opencv3</build_depend>
   <build_depend>roslint</build_depend>
+
+
   <buildtool_depend>catkin</buildtool_depend>
 
 

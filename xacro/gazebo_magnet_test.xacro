@@ -1,14 +1,18 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-<gazebo reference="car_sonar/base_link">
+<gazebo reference="car_sonar/test_link">
 
 <sensor name='my_contact' type='camera'>
 
-    <plugin name="SonarVisual" filename="libSonarVisual.so" >
-        <horizontal_fov>${pi}</horizontal_fov>
+    <plugin name="SonarVisual" filename="libfl_sonar_ros.so" >
+        <link_reference>car_sonar/test_link</link_reference>
+        <horizontal_fov>${pi/2}</horizontal_fov>
+        <vfov>${pi/4}</vfov>
+        <bin_count>720</bin_count>
+        <beam_count>720</beam_count>
         <image>
-            <width>100</width>
-            <height>100</height>
+            <width>720</width>
+            <height>720</height>
             <format>R32G32B32</format>
 <<<<<<< HEAD
 >>>>>>> 3db1d56... Modification of main class to sonar
@@ -17,7 +21,7 @@
         </image>
         <clip>
             <near>0.1</near>
-            <far>3000</far>
+            <far>5</far>
         </clip>
         <noise>
             <type>gaussian</type>
