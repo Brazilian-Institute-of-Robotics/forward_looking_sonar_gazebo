@@ -35,21 +35,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 set(ROSLINT_CPP_OPTS "--extensions=hpp,cpp,c,hh,cc,h")
 
 set(GAZEBO_ROS_SONAR_PLUGIN_SRCS
-<<<<<<< HEAD
-  src/Sonar.cc
-  src/SensorPlugin.cc)
-<<<<<<< HEAD
->>>>>>> 3db1d56... Modification of main class to sonar
-=======
->>>>>>> 7c8862b... 2
- # src/ImageViewerCaptureTool.cc
- # src/NormalDepthMap.cc
- # src/Tools.cc)
-=======
   src/FLSonarRos.cc)
 set(GAZEBO_SONAR_PLUGIN_SRCS
   src/FLSonar.cc)
->>>>>>> 2592e5a... Files Organization of Shader implementation
 
 set(GAZEBO_ROS_SONAR_PLUGIN_HEADERS
  include/${PROJECT_NAME}/FLSonar.hh)

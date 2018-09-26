@@ -15,10 +15,6 @@
             <width>720</width>
             <height>720</height>
             <format>R32G32B32</format>
-<<<<<<< HEAD
->>>>>>> 3db1d56... Modification of main class to sonar
-=======
->>>>>>> 7c8862b... 2
         </image>
         <clip>
             <near>0.1</near>
@@ -31,10 +27,6 @@
         </noise>
     </plugin>  
 </sensor>  
-<<<<<<< HEAD
->>>>>>> 3db1d56... Modification of main class to sonar
-=======
->>>>>>> 7c8862b... 2
 
 </gazebo>
 

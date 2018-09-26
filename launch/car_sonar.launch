@@ -6,10 +6,6 @@
     <arg name="verbose" value="true" />
     <arg name="gui" value="true" />
     <arg name="debug" value="false" />
-<<<<<<< HEAD
->>>>>>> 3db1d56... Modification of main class to sonar
-=======
->>>>>>> 7c8862b... 2
   </include>
 
   <arg name="debug" default="0"/>

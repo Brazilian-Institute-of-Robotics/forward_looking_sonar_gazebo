@@ -22,8 +22,8 @@
 #include "gazebo/rendering/Scene.hh"
 #include "gazebo/rendering/ogre_gazebo.h"
 #include "gazebo/test/ServerFixture.hh"
-#include "IncludePaths.h"
 #include "gazebo/common/MeshManager.hh"
+#include "IncludePaths.h"
 
 #include <gazebo_ros_sonar_plugin/FLSonar.hh>
 
