@@ -3,7 +3,9 @@ project(gazebo_ros_sonar_plugin)
 
 
 find_package(catkin REQUIRED COMPONENTS roslint
-  )
+  image_transport 
+  roscpp 
+  sensor_msgs)
 find_package(OpenCV REQUIRED)
 find_package(GAZEBO REQUIRED)
 find_package(Boost REQUIRED)

@@ -31,7 +31,7 @@
   <arg name="longitude_ref" default="0"/>
   <arg name="altitude_ref" default="0"/>
 
-  <arg name="concept" default="magnet_test"/>
+  <arg name="concept" default="car_sonar"/>
 
   <!-- Mode to open different robot configurations as set the in file
   nomenclature standard for the files in /robots

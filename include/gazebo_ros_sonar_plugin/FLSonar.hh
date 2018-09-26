@@ -126,6 +126,14 @@ namespace gazebo
       /// \return shader output
       public: cv::Mat ShaderImage() const;
 
+      /// \brief Get the sonar image on polar coordinates
+      /// \return sonar image output
+      public: cv::Mat SonarImage() const;
+
+      /// \brief Get the sonar mask for polar coordinater
+      /// \return sonar mask
+      public: cv::Mat SonarMask() const;
+
       /// \brief Set the near clip distance
       /// \param[in] _near near clip distance
       public: void SetNearClip(const double _near);

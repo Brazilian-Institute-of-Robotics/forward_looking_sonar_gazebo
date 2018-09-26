@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Loading concept -->
-  <xacro:property name="concept" value="magnet_test"/>
+  <xacro:property name="concept" value="car_sonar"/>
   <!-- Loading vehicle's specific macros -->
   <xacro:include filename="$(find  gazebo_ros_sonar_plugin)/xacro/snippets_${concept}.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/models/common/urdf/common.urdf.xacro"/>
@@ -80,8 +80,8 @@
     <!-- Set up hydrodynamic plugin given as input parameter -->
     <xacro:insert_block name="gazebo"/>
     <!-- Include the thruster modules -->
-    <xacro:include filename="$(find gazebo_ros_sonar_plugin)/xacro/actuators_magnet_test.xacro"/>
+    <xacro:include filename="$(find gazebo_ros_sonar_plugin)/xacro/actuators_car_sonar.xacro"/>
     <!-- Include the sensor modules -->
-    <xacro:include filename="$(find gazebo_ros_sonar_plugin)/xacro/sensors_magnet_test.xacro"/>
+    <xacro:include filename="$(find gazebo_ros_sonar_plugin)/xacro/sensors_car_sonar.xacro"/>
   </xacro:macro>
 </robot>

@@ -1,6 +1,8 @@
 #include <functional>
 #include <boost/scoped_ptr.hpp>
 #include <math.h>
+
+//Gazebo Dependencies
 #include "gazebo/rendering/ogre_gazebo.h"
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
@@ -9,6 +11,13 @@
 #include <gazebo/rendering/rendering.hh>
 #include <gazebo/sensors/sensors.hh>
 
+// Ros Dependencies
+#include <ros/ros.h>
+#include <image_transport/image_transport.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <cv_bridge/cv_bridge.h>
+
+// FLSonar Dependencies
 #include "gazebo_ros_sonar_plugin/FLSonar.hh"
 
 namespace gazebo
@@ -68,7 +77,26 @@ private:
 
     // Pointer to the update event connection
     event::ConnectionPtr updatePostRender;
+
     event::ConnectionPtr updatePreRender;
+    
+    // Ros node handle
+    boost::scoped_ptr<ros::NodeHandle> rosNode;  
+
+    // Ros image transport for sonar image
+    boost::scoped_ptr<image_transport::ImageTransport> sonarImageTransport;
+
+    // Image transport publisher for sonar image
+    image_transport::Publisher sonarImagePub;
+
+    // Ros image transport for shader image
+    boost::scoped_ptr<image_transport::ImageTransport> shaderImageTransport;
+
+    // Image transport publisher for shader image
+    image_transport::Publisher shaderImagePub;
+
+    // Debug flag
+    bool bDebug;
 
 
   };

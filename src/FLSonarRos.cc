@@ -1,5 +1,7 @@
 #include "gazebo_ros_sonar_plugin/FLSonarRos.hh"
 
+#include <sensor_msgs/Range.h>
+
 
 namespace gazebo
 {
@@ -38,7 +40,7 @@ namespace gazebo
     this->scene = rendering::get_scene(worldName);
 
     // Get scene pointer
-    gzwarn << rendering::RenderEngine::Instance()->GetSceneCount() << " Num Scenes" << std::endl;
+    gzwarn << rendering::RenderEngine::Instance()->SceneCount() << " Num Scenes" << std::endl;
 
     if(!this->scene)
     {
@@ -51,12 +53,39 @@ namespace gazebo
       
       gzwarn << "Got Scene" << std::endl;
       double hfov = M_PI/2;
-      this->sonar=boost::shared_ptr<rendering::FLSonar>(new rendering::FLSonar(this->sensor->GetName(),this->scene,false)); 
+      this->sonar=boost::shared_ptr<rendering::FLSonar>(new rendering::FLSonar(this->sensor->Name(),this->scene,false)); 
       this->sonar->SetFarClip(100.0);
       this->sonar->Init();
       this->sonar->Load(_sdf);
       this->sonar->CreateTexture("GPUTexture");
     }
+
+    if (!ros::isInitialized())
+    {
+      gzerr << "Not loading plugin since ROS has not been "
+            << "properly initialized.  Try starting gazebo with ros plugin:\n"
+            << "  gazebo -s libgazebo_ros_api_plugin.so\n";
+      return;
+    }
+    this->rosNode.reset(new ros::NodeHandle(""));
+
+    this->sonarImageTransport.reset(new image_transport::ImageTransport(*this->rosNode));
+
+    GZ_ASSERT(std::strcmp(_sdf->Get<std::string>("topic").c_str(),""),"Topic name is not set");
+
+    this->sonarImagePub = this->sonarImageTransport->advertise(_sdf->Get<std::string>("topic"), 1);
+
+    this->bDebug = false;
+    if (_sdf->HasElement("debug"))
+    {
+      this->bDebug = _sdf->Get<bool>("debug");
+      if(this->bDebug)
+      {
+        this->shaderImageTransport.reset(new image_transport::ImageTransport(*this->rosNode));
+        this->shaderImagePub = this->shaderImageTransport->advertise(_sdf->Get<std::string>("topic") + "/shader", 1);
+      }
+    }
+
 
   }
 
@@ -81,6 +110,32 @@ namespace gazebo
   void FLSonarRos::OnPostRender()
   {
     this->sonar->PostRender();
+
+    // Publish sonar image
+    {
+      cv::Mat sonarImage = this->sonar->SonarImage();
+      cv::Mat sonarMask = this->sonar->SonarMask();
+
+      cv::Mat B = cv::Mat::zeros(sonarImage.rows, sonarImage.cols, CV_8UC1);
+      sonarImage.convertTo(B,CV_8UC1,255);
+
+      cv::applyColorMap(B, B, cv::COLORMAP_WINTER);
+      B.setTo(0,~sonarMask);
+
+      sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", B).toImageMsg();
+      this->sonarImagePub.publish(msg);
+    }
+
+    // Publish shader image
+    if(this->bDebug)
+    {
+      cv::Mat shaderImage = this->sonar->ShaderImage();
+      cv::Mat B = cv::Mat::zeros(shaderImage.rows, shaderImage.cols, CV_8UC3);
+      shaderImage.convertTo(B,CV_8UC3,255);
+
+      sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", B).toImageMsg();
+      this->shaderImagePub.publish(msg);
+    }
 
   }
 }

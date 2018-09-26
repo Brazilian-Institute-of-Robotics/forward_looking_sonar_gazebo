@@ -428,6 +428,18 @@ cv::Mat FLSonar::ShaderImage() const
 }
 
 //////////////////////////////////////////////////
+cv::Mat FLSonar::SonarImage() const
+{
+  return this->sonarImage;
+}
+
+//////////////////////////////////////////////////
+cv::Mat FLSonar::SonarMask() const
+{
+  return this->sonarImageMask;
+}
+
+//////////////////////////////////////////////////
 void FLSonar::SetImageWidth(const int &_value)
 {
   this->imageWidth = _value;
@@ -505,17 +517,6 @@ void FLSonar::GetSonarImage()
   // this->DebugPrintMatrixToFile<int>("Teste3.dat", transferTable);
 
   this->TransferTableToSonar(accumData, transferTable);
-
-  cv::Mat B = cv::Mat::zeros(sonarImageWidth, sonarImageHeight, CV_8UC1);
-  this->sonarImage.convertTo(B,CV_8UC1,255);
-
-  cv::applyColorMap(B, B, cv::COLORMAP_WINTER);
-  //cv::bitwise_and(B,this->sonarImageMask,B) ;
-  //B.copyTo(C , this->sonarImageMask );
-  B.setTo(0,~this->sonarImageMask);
-
-  cv::imwrite("Sera.png",B);
-
 
 }
 

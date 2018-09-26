@@ -1,9 +1,0 @@
-<launch>
-
-  <!-- Controller test -->
-  <test test-name="sonar_test"
-        pkg="gazebo_ros_sonar_plugin"
-        type="sonar_test"
-        time-limit="180.0">
-  </test>
-</launch>

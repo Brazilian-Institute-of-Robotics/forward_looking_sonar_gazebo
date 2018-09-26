@@ -2,9 +2,10 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 <gazebo reference="car_sonar/test_link">
 
-<sensor name='my_contact' type='camera'>
+<sensor name='FLSonar' type='camera'>
 
     <plugin name="SonarVisual" filename="libfl_sonar_ros.so" >
+        <topic>car_sonar/FLSonar</topic>
         <link_reference>car_sonar/test_link</link_reference>
         <horizontal_fov>${pi/2}</horizontal_fov>
         <vfov>${pi/4}</vfov>
