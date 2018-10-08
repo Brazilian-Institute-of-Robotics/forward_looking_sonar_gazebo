@@ -4,8 +4,9 @@
 
 <sensor name='FLSonar' type='camera'>
 
-    <plugin name="SonarVisual" filename="libfl_sonar_ros.so" >
+    <plugin name="SonarVisual" filename="FowardLookingGazeboSonar.so" >
         <topic>car_sonar/FLSonar</topic>
+        <debug>1</debug>
         <link_reference>car_sonar/test_link</link_reference>
         <horizontal_fov>${pi/2}</horizontal_fov>
         <vfov>${pi/4}</vfov>

@@ -83,8 +83,6 @@
         <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
           <mu1 value="1"/>
           <mu2 value="1"/>
-          <!-- <minDepth value="0.000001"/> -->
-          <!-- <maxContacts value="1"/> -->
           <kp  value="${kp_wheel}" />
           <kd  value="${kd_wheel}" />
           <fdir1 value="${fdir_wheel}"/>
@@ -98,8 +96,6 @@
         <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
           <mu1 value="1"/>
           <mu2 value="1"/>
-          <!-- <minDepth value="0.000001"/> -->
-          <!-- <maxContacts value="1"/> -->
           <kp  value="${kp_wheel}" />
           <kd  value="${kd_wheel}" />
           <fdir1 value="${fdir_wheel}"/>
@@ -113,8 +109,6 @@
         <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
           <mu1 value="1"/>
           <mu2 value="1"/>
-          <!-- <minDepth value="0.000001"/> -->
-          <!-- <maxContacts value="1"/> -->
           <kp  value="${kp_wheel}" />
           <kd  value="${kd_wheel}" />
           <fdir1 value="${fdir_wheel}"/>
@@ -128,8 +122,6 @@
         <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
           <mu1 value="1"/>
           <mu2 value="1"/>
-          <!-- <minDepth value="0.000001"/> -->
-          <!-- <maxContacts value="1"/> -->
           <kp  value="${kp_wheel}" />
           <kd  value="${kd_wheel}" />
           <fdir1 value="${fdir_wheel}"/>
