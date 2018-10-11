@@ -30,8 +30,11 @@
 #include "gazebo/rendering/Scene.hh"
 #include "foward_looking_gazebo_sonar/FLSonar.hh"
 
-using namespace gazebo;  // NOLINT(build/namespaces)
-using namespace rendering;  // NOLINT(build/namespaces)
+namespace gazebo
+{
+
+namespace rendering
+{
 
 
 //////////////////////////////////////////////////
@@ -69,28 +72,29 @@ void FLSonar::Load(sdf::ElementPtr _sdf)
   {
     sdf::ElementPtr iSdf = _sdf->GetElement("clip");
     GZ_ASSERT(iSdf != nullptr, "clip is not set");
-    GZ_ASSERT(iSdf->Get<double>("far"), "far element of clip is not set");
-    this->SetFarClip(iSdf->Get<double>("far"));
 
-    GZ_ASSERT(iSdf->Get<double>("near"), "near element of clip is not set");
-    this->SetNearClip(iSdf->Get<double>("near"));
+    this->SetFarClip(this->GetSDFElement(iSdf, "far"));
+    this->SetNearClip(this->GetSDFElement(iSdf, "near"));
   }
 
   {
     sdf::ElementPtr iSdf = _sdf->GetElement("image");
     GZ_ASSERT(iSdf != nullptr, "Image is not set");
-    GZ_ASSERT(iSdf->Get<double>("width"), "Width element of image is not set");
-    this->SetImageWidth(iSdf->Get<double>("width"));
 
-    GZ_ASSERT(iSdf->Get<double>("height"), "Height element of image is not set");
-    this->SetImageHeight(iSdf->Get<double>("height"));
+    this->SetImageWidth(this->GetSDFElement(iSdf, "width"));
+    this->SetImageHeight(this->GetSDFElement(iSdf, "height"));
   }
 
-  GZ_ASSERT(_sdf->Get<double>("bin_count"), "bin_count is not set");
-  this->SetBinCount(_sdf->Get<double>("bin_count"));
+  this->SetBinCount(this->GetSDFElement(_sdf, "bin_count"));
 
-  GZ_ASSERT(_sdf->Get<double>("beam_count"), "beam_count is not set");
-  this->SetBeamCount(_sdf->Get<double>("beam_count"));
+  this->SetBeamCount(this->GetSDFElement(_sdf, "beam_count"));
+}
+
+//////////////////////////////////////////////////
+double FLSonar::GetSDFElement(sdf::ElementPtr &_sdf, const std::string _nameElement)
+{
+  GZ_ASSERT(_sdf->Get<double>(_nameElement), std::string(_nameElement + " is not set").c_str());
+  return _sdf->Get<double>(_nameElement);
 }
 
 //////////////////////////////////////////////////
@@ -687,3 +691,5 @@ float FLSonar::Sigmoid(float x)
   float t = (x - x0) * beta;
   return (0.5 * tanh(0.5 * t) + 0.5);
 }
+}  // namespace rendering
+}  // namespace gazebo

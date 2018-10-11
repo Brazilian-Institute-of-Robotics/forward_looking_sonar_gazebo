@@ -47,7 +47,6 @@ void FLSonarRos::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   if (!this->scene)
   {
     this->scene = rendering::RenderEngine::Instance()->CreateScene(worldName, false, true);
-    gzwarn << "Que budega" << std::endl;
   }
 
   if (scene != nullptr)

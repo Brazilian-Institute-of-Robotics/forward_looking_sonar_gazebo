@@ -183,6 +183,16 @@ protected:
   void ImageTextureToCV(float _width, int _height, Ogre::Texture* _inTex);
 
   /**
+   * @brief Get the double with the specif name
+   * 
+   * @param _sdf sdf element to read
+   * @param _nameElement Name of the sdf element
+   * @return double 
+   */
+protected:
+  double GetSDFElement(sdf::ElementPtr &_sdf, const std::string _nameElement);
+
+  /**
    * @brief Documentation Iherited
    *
    * @param _type

@@ -89,10 +89,7 @@ if (CATKIN_ENABLE_TESTING)
     ${GAZEBO_LIBRARY_DIRS}
   )
 
-  #Add Media Path
-  set(OGRE_GAZEBO_MEIDA_PATH "${PROJECT_SOURCE_DIR}/media")
-  configure_file( test/IncludePaths.h.in ${CMAKE_BINARY_DIR}/generated/IncludePaths.h )
-  include_directories( ${CMAKE_BINARY_DIR}/generated/ )
+  
 
   #MESSAGE(FATAL_ERROR ${GAZEBO_LIBRARY_DIRS})
   add_library(gazebo_test_fixture EXCLUDE_FROM_ALL test/ServerFixture.cc)
@@ -100,6 +97,8 @@ if (CATKIN_ENABLE_TESTING)
 
   add_rostest_gtest(FLSonar_TEST test/pure_gazebo_test.test test/FLSonar_TEST.cc)
   target_link_libraries(FLSonar_TEST gazebo_test_fixture ${GAZEBO_LIBRARIES} gtest ${FOWARD_LOOKING_GAZEBO_SONAR_LIST} ${OpenCV_LIBRARIES})
+  #Add Media Path
+  set_target_properties(FLSonar_TEST PROPERTIES COMPILE_DEFINITIONS "OGRE_MEDIA_PATH=\"${PROJECT_SOURCE_DIR}/media\"")
 
   roslint_add_test()
 endif()

@@ -8,7 +8,6 @@
 #include "gazebo/rendering/ogre_gazebo.h"
 #include "gazebo/test/ServerFixture.hh"
 #include "gazebo/common/MeshManager.hh"
-#include "IncludePaths.h"
 
 #include <foward_looking_gazebo_sonar/FLSonar.hh>
 
@@ -178,10 +177,10 @@ protected:
 /////////////////////////////////////////////////
 TEST_F(Sonar_TEST, Create)
 {
-  std::string programsFolder = GetMediaPath() + "/materials/programs";
+  std::string programsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/programs";
   gazebo::common::SystemPaths::Instance()->AddGazeboPaths(programsFolder.c_str());
 
-  std::string materialsFolder = GetMediaPath() + "/materials/scripts";
+  std::string materialsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/scripts";
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
           materialsFolder.c_str(), "FileSystem", "General", true);
 
@@ -251,10 +250,10 @@ TEST_F(Sonar_TEST, Create)
 /////////////////////////////////////////////////
 TEST_F(Sonar_TEST, SphereDraw)
 {
-  std::string programsFolder = GetMediaPath() + "/materials/programs";
+  std::string programsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/programs";
   gazebo::common::SystemPaths::Instance()->AddGazeboPaths(programsFolder.c_str());
 
-  std::string materialsFolder = GetMediaPath() + "/materials/scripts";
+  std::string materialsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/scripts";
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
           materialsFolder.c_str(), "FileSystem", "General", true);
 
@@ -339,10 +338,10 @@ TEST_F(Sonar_TEST, SphereDraw)
 /////////////////////////////////////////////////
 TEST_F(Sonar_TEST, ConeDraw)
 {
-  std::string programsFolder = GetMediaPath() + "/materials/programs";
+  std::string programsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/programs";
   gazebo::common::SystemPaths::Instance()->AddGazeboPaths(programsFolder.c_str());
 
-  std::string materialsFolder = GetMediaPath() + "/materials/scripts";
+  std::string materialsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/scripts";
   Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
           materialsFolder.c_str(), "FileSystem", "General", true);
 
