@@ -40,7 +40,8 @@ set(FOWARD_LOOKING_GAZEBO_SONAR_SRCS
 
 set(FOWARD_LOOKING_GAZEBO_SONAR_HEADERS
  include/${PROJECT_NAME}/FLSonar.hh
- include/${PROJECT_NAME}/FLSonarRos.hh)
+ include/${PROJECT_NAME}/FLSonarRos.hh
+ include/${PROJECT_NAME}/SDFTool.hh)
 
 roslint_cpp()
 
@@ -48,7 +49,7 @@ roslint_cpp(${FOWARD_LOOKING_GAZEBO_SONAR_SRCS}
   ${FOWARD_LOOKING_GAZEBO_SONAR_HEADERS})
 
 add_library(FLSonar src/FLSonar.cc)
-target_link_libraries(FLSonar ${GAZEBO_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(FLSonar ${GAZEBO_LIBRARIES} ${OpenCV_LIBRARIES} ${FOWARD_LOOKING_GAZEBO_SONAR_LIST})
 list(APPEND FOWARD_LOOKING_GAZEBO_SONAR_LIST FLSonar)
 
 add_library(FowardLookingGazeboSonar src/FLSonarRos.cc)
@@ -96,7 +97,7 @@ if (CATKIN_ENABLE_TESTING)
   target_link_libraries(gazebo_test_fixture ${GAZEBO_LIBRARIES})
 
   add_rostest_gtest(FLSonar_TEST test/pure_gazebo_test.test test/FLSonar_TEST.cc)
-  target_link_libraries(FLSonar_TEST gazebo_test_fixture ${GAZEBO_LIBRARIES} gtest ${FOWARD_LOOKING_GAZEBO_SONAR_LIST} ${OpenCV_LIBRARIES})
+  target_link_libraries(FLSonar_TEST gazebo_test_fixture ${GAZEBO_LIBRARIES} gtest ${OpenCV_LIBRARIES} ${FOWARD_LOOKING_GAZEBO_SONAR_LIST})
   #Add Media Path
   set_target_properties(FLSonar_TEST PROPERTIES COMPILE_DEFINITIONS "OGRE_MEDIA_PATH=\"${PROJECT_SOURCE_DIR}/media\"")
 

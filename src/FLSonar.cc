@@ -29,6 +29,7 @@
 #include "gazebo/rendering/Conversions.hh"
 #include "gazebo/rendering/Scene.hh"
 #include "foward_looking_gazebo_sonar/FLSonar.hh"
+#include "foward_looking_gazebo_sonar/SDFTool.hh"
 
 namespace gazebo
 {
@@ -69,25 +70,16 @@ void FLSonar::Load(sdf::ElementPtr _sdf)
   this->camera->setAspectRatio(1.0);
   this->camera->setAutoAspectRatio(0);
 
-  {
-    sdf::ElementPtr iSdf = _sdf->GetElement("clip");
-    GZ_ASSERT(iSdf != nullptr, "clip is not set");
 
-    this->SetFarClip(this->GetSDFElement(iSdf, "far"));
-    this->SetNearClip(this->GetSDFElement(iSdf, "near"));
-  }
 
-  {
-    sdf::ElementPtr iSdf = _sdf->GetElement("image");
-    GZ_ASSERT(iSdf != nullptr, "Image is not set");
+  this->SetFarClip(gazebo::SDFTool::GetSDFElement<double>(_sdf, "far", "clip"));
+  this->SetNearClip(gazebo::SDFTool::GetSDFElement<double>(_sdf, "near", "clip"));
 
-    this->SetImageWidth(this->GetSDFElement(iSdf, "width"));
-    this->SetImageHeight(this->GetSDFElement(iSdf, "height"));
-  }
+  this->SetImageWidth(gazebo::SDFTool::GetSDFElement<double>(_sdf, "width", "image"));
+  this->SetImageHeight(gazebo::SDFTool::GetSDFElement<double>(_sdf, "height", "image"));
 
-  this->SetBinCount(this->GetSDFElement(_sdf, "bin_count"));
-
-  this->SetBeamCount(this->GetSDFElement(_sdf, "beam_count"));
+  this->SetBinCount(gazebo::SDFTool::GetSDFElement<double>(_sdf, "bin_count"));
+  this->SetBeamCount(gazebo::SDFTool::GetSDFElement<double>(_sdf, "beam_count"));
 }
 
 //////////////////////////////////////////////////

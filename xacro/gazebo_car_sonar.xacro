@@ -4,7 +4,7 @@
 
 <sensor name='FLSonar' type='camera'>
 
-    <plugin name="SonarVisual" filename="FowardLookingGazeboSonar.so" >
+    <plugin name="SonarVisual" filename="libFowardLookingGazeboSonar.so" >
         <topic>car_sonar/FLSonar</topic>
         <debug>1</debug>
         <link_reference>car_sonar/test_link</link_reference>

@@ -2,6 +2,8 @@
 
 #include "foward_looking_gazebo_sonar/FLSonarRos.hh"
 
+#include "foward_looking_gazebo_sonar/SDFTool.hh"
+
 #include <sensor_msgs/Range.h>
 
 
@@ -35,8 +37,9 @@ void FLSonarRos::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   GZ_ASSERT(parent, "This parent does not exisst");
 
-  gzwarn << "link name :" << _sdf->Get<std::string>("link_reference") << std::endl;
-  current = parent->GetChildLink(_sdf->Get<std::string>("link_reference"));
+  gzwarn << "link name :" << gazebo::SDFTool::GetSDFElement<std::string>(_sdf, "link_reference") << std::endl;
+
+  current = parent->GetChildLink(gazebo::SDFTool::GetSDFElement<std::string>(_sdf, "link_reference"));
   GZ_ASSERT(current, "It must have this link");
 
   this->scene = rendering::get_scene(worldName);
