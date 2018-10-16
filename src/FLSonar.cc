@@ -83,13 +83,6 @@ void FLSonar::Load(sdf::ElementPtr _sdf)
 }
 
 //////////////////////////////////////////////////
-double FLSonar::GetSDFElement(sdf::ElementPtr &_sdf, const std::string _nameElement)
-{
-  GZ_ASSERT(_sdf->Get<double>(_nameElement), std::string(_nameElement + " is not set").c_str());
-  return _sdf->Get<double>(_nameElement);
-}
-
-//////////////////////////////////////////////////
 void FLSonar::Load()
 {
   Camera::Load();
