@@ -69,12 +69,6 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN "*~" EXCLUDE
 )
 
-# Install urdf files
-#install(DIRECTORY urdf
-#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-#  PATTERN "*~" EXCLUDE)
-
-
 if (CATKIN_ENABLE_TESTING)
   find_package(cmake_modules)
   find_package(rostest REQUIRED)
@@ -90,9 +84,6 @@ if (CATKIN_ENABLE_TESTING)
     ${GAZEBO_LIBRARY_DIRS}
   )
 
-  
-
-  #MESSAGE(FATAL_ERROR ${GAZEBO_LIBRARY_DIRS})
   add_library(gazebo_test_fixture EXCLUDE_FROM_ALL test/ServerFixture.cc)
   target_link_libraries(gazebo_test_fixture ${GAZEBO_LIBRARIES})
 
