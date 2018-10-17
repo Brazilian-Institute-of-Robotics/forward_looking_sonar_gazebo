@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- -->
+  <xacro:property name="delta_y" value="0.001"/>
+  <!-- -->
+  <xacro:wheel_macro robot_namespace="${namespace}" wheel_id="0" suspension="false">
+    <origin xyz="0.25 0.25 0" rpy="0 0 0"/>
+  </xacro:wheel_macro>
+  <!-- -->
+  <xacro:wheel_macro robot_namespace="${namespace}" wheel_id="1" suspension="false">
+    <origin xyz=" -0.25 0.25 0" rpy="0 0 0"/>
+  </xacro:wheel_macro>
+  <!-- -->
+  <xacro:wheel_macro robot_namespace="${namespace}" wheel_id="2" suspension="true">
+    <origin xyz="0.25 -0.25 0" rpy="0 0 0"/>
+  </xacro:wheel_macro>
+  <!-- -->
+  <xacro:wheel_macro robot_namespace="${namespace}" wheel_id="3" suspension="false">
+    <origin xyz="-0.25 -0.25 0" rpy="0 0 0"/>
+  </xacro:wheel_macro>
+  <!-- -->
+</robot>

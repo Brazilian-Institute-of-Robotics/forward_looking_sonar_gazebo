@@ -1,0 +1,67 @@
+<launch>
+
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="verbose" value="true" />
+    <arg name="gui" value="true" />
+    <arg name="debug" value="false" />
+  </include>
+
+  <arg name="debug" default="0"/>
+
+
+  <arg name="x"     default="0"/>
+  <arg name="y"     default="0"/>
+  <arg name="z"     default="0"/>
+  <arg name="roll"  default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw"   default="0"/>
+
+  <!-- <arg name="x"     default="1.030163"/>
+  <arg name="y"     default="-1.786448"/>
+  <arg name="z"     default="-3.419220"/>
+  <arg name="roll"  default="-2.666786"/>
+  <arg name="pitch" default="0.187827"/>
+  <arg name="yaw"   default="0.095689"/> -->
+
+  <arg name="use_geodetic" default="false"/>
+  <arg name="latitude" default="0"/>
+  <arg name="longitude" default="0"/>
+  <arg name="depth" default="0"/>
+
+  <arg name="latitude_ref" default="0"/>
+  <arg name="longitude_ref" default="0"/>
+  <arg name="altitude_ref" default="0"/>
+
+  <arg name="concept" default="car_sonar"/>
+
+  <!-- Mode to open different robot configurations as set the in file
+  nomenclature standard for the files in /robots
+  -->
+
+  <arg name="mode" default="default"/>
+
+  <!-- Vehicle's namespace -->
+  <arg name="namespace" default="car_sonar"/>
+
+  <arg name="world_frame" default="world"/>
+
+<group ns="$(arg namespace)">
+    <param name="robot_description"
+           command="$(find xacro)/xacro.py --inorder '$(find foward_looking_gazebo_sonar)/xacro/$(arg mode)_$(arg concept).xacro' debug:=$(arg debug) namespace:=$(arg namespace) concept:=$(arg concept)" /> -->   
+
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>
+
+    <!-- A joint state publisher plugin already is started with the model, no need to use the default joint state publisher -->
+
+    <!-- Publish robot model for ROS -->
+
+  </group>
+
+
+
+
+
+
+</launch>

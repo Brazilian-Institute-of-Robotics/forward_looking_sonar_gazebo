@@ -1,0 +1,3 @@
+<launch>
+ <test test-name="FLSonar_TEST" pkg="foward_looking_gazebo_sonar" type="FLSonar_TEST" />
+</launch>

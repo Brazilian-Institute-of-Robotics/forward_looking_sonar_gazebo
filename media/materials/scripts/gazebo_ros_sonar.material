@@ -1,0 +1,36 @@
+vertex_program GazeboRosSonar/NormalDepthMapVS glsl
+{
+  source normal_depth_map.vert
+}
+
+fragment_program GazeboRosSonar/NormalDepthMapFS glsl
+{
+  source normal_depth_map.frag
+
+  default_params
+  {
+    param_named farPlane float 0.0
+    param_named drawNormal int 1
+    param_named drawDepth int 1
+    param_named normalTexture int 0
+    param_named reflectance float 0.0
+    param_named attenuationCoeff float 0.0
+  }
+}
+
+
+material GazeboRosSonar/NormalDepthMap
+{
+  technique
+  {
+    pass my_laser_tex
+    {
+      separate_scene_blend one zero one zero
+
+      vertex_program_ref GazeboRosSonar/NormalDepthMapVS { }
+      fragment_program_ref GazeboRosSonar/NormalDepthMapFS { }
+    }
+  }
+}
+
+

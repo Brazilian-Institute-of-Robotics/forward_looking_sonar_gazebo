@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Loading concept -->
+  <xacro:property name="concept" value="test"/>
+  
+
+ <!-- Wheel macro -->
+ <xacro:macro name="wheel_macro" params="robot_namespace wheel_id *origin suspension">
+
+    <link name="${robot_namespace}/wheel_${wheel_id}"> 
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+        <geometry>
+          <cylinder radius="0.17" length="0.001"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
+        <geometry>
+          <cylinder radius="0.17" length="0.001"/>
+        </geometry>
+      </collision>
+
+      <inertial>
+        <mass value="40" />
+        <origin xyz="0.0 0.0 0.0" rpy="0 ${pi/2} 0"/>
+        <inertia ixx="0.001" ixy="0.001" ixz="0.001"
+                 iyy="0.001" iyz="0.001"
+                 izz="0.001" />
+      </inertial>
+
+
+    </link>
+
+    <joint name="${robot_namespace}/wheel_${wheel_id}_joint" type="revolute">
+      
+      <limit upper="0" lower="0" effort="100000" velocity="0" />
+      <xacro:insert_block name="origin" />
+      <axis xyz="1 0 0" />
+      <parent link="${robot_namespace}/base_link" />
+      <child link="${robot_namespace}/wheel_${wheel_id}" />
+    </joint>
+
+    
+
+    <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+
+    <gazebo reference="${robot_namespace}/wheel_${wheel_id}_joint">
+      <provideFeedback value="true"/>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+        <updateRate>1000</updateRate>
+        <topicName>${robot_namespace}/wheel_${wheel_id}_joint/ft_sensor_topic</topicName>
+        <jointName>${robot_namespace}/wheel_${wheel_id}_joint</jointName>
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
+        <sensor name="wheel_${wheel_id}_sensor" type="contact">
+            <always_on>true</always_on>
+            <update_rate>60</update_rate>
+            <contact>
+              <collision>${robot_namespace}/wheel_${wheel_id}_collision</collision>
+            </contact>
+            <plugin name="wheel_${wheel_id}_bumper" filename="libgazebo_ros_bumper.so">
+              <bumperTopicName>wheel_${wheel_id}_contact</bumperTopicName>
+            </plugin>
+          </sensor>
+        </gazebo>
+
+    <xacro:property name="kp_wheel" value="1000000000"/>
+    <xacro:property name="kd_wheel" value="1"/>
+    <xacro:property name="fdir_wheel" value="0 0 1"/>
+
+    <xacro:if value="${wheel_id==0}">
+
+        <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
+          <mu1 value="1"/>
+          <mu2 value="1"/>
+          <kp  value="${kp_wheel}" />
+          <kd  value="${kd_wheel}" />
+          <fdir1 value="${fdir_wheel}"/>
+          <material>Gazebo/Red</material>
+        </gazebo>
+
+    </xacro:if>
+
+    <xacro:if value="${wheel_id==1}">
+
+        <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
+          <mu1 value="1"/>
+          <mu2 value="1"/>
+          <kp  value="${kp_wheel}" />
+          <kd  value="${kd_wheel}" />
+          <fdir1 value="${fdir_wheel}"/>
+          <material>Gazebo/Red</material>
+        </gazebo>
+
+    </xacro:if>
+
+    <xacro:if value="${wheel_id==2}">
+
+        <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
+          <mu1 value="1"/>
+          <mu2 value="1"/>
+          <kp  value="${kp_wheel}" />
+          <kd  value="${kd_wheel}" />
+          <fdir1 value="${fdir_wheel}"/>
+          <material>Gazebo/Red</material>
+        </gazebo>
+
+    </xacro:if>
+
+    <xacro:if value="${wheel_id==3}">
+
+        <gazebo reference="${robot_namespace}/wheel_${wheel_id}">
+          <mu1 value="1"/>
+          <mu2 value="1"/>
+          <kp  value="${kp_wheel}" />
+          <kd  value="${kd_wheel}" />
+          <fdir1 value="${fdir_wheel}"/>
+          <material>Gazebo/Red</material>
+        </gazebo>
+
+    </xacro:if>
+
+  </xacro:macro>
+
+</robot>
