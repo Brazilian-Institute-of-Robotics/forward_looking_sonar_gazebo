@@ -100,7 +100,9 @@ void FLSonarRos::OnPreRender()
 
 void FLSonarRos::OnUpdate()
 {
-  gzwarn << this->sensor->ParentName() << std::endl;
+  if (this->bDebug)
+    gzwarn << this->sensor->ParentName() << std::endl;
+
   this->sonar->RenderImpl();
 }
 
