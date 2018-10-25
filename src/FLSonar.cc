@@ -155,10 +155,10 @@ void FLSonar::ImageTextureToCV(float _width, int _height, Ogre::Texture* _inTex)
 void FLSonar::PostRender()
 {
   ignition::math::Pose3d myPose = this->WorldPose();
-  gzwarn << "Pose x " << myPose.Pos().X() << "Pose y " << myPose.Pos().Y() << "Pose z "
-    << myPose.Pos().Z() << std::endl;
-  gzwarn << " Aspect Ratio: " << this->camera->getAspectRatio() << ", auto aspcet: "
-    << this->camera->getAutoAspectRatio() << std::endl;
+  // gzwarn << "Pose x " << myPose.Pos().X() << "Pose y " << myPose.Pos().Y() << "Pose z "
+  //   << myPose.Pos().Z() << std::endl;
+  // gzwarn << " Aspect Ratio: " << this->camera->getAspectRatio() << ", auto aspcet: "
+  //   << this->camera->getAutoAspectRatio() << std::endl;
   // gzwarn << "--------------------Starte-----------------" << std::endl;
   // this->GetScene()->PrintSceneGraph();
   // gzwarn << "---------------------------ENDED--------------" << std::endl;
@@ -309,7 +309,7 @@ void FLSonar::RenderImpl()
 
   double firstPassDur = firstPassTimer.GetElapsed().Double();
 
-  gzwarn << firstPassDur << std::endl;
+  // gzwarn << firstPassDur << std::endl;
 }
 
 //////////////////////////////////////////////////
