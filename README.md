@@ -1,4 +1,4 @@
-Foward looking sonar for gazebo
+Forward looking sonar for gazebo
 =======================================
 
 Sonar based on a the article **[A novel GPU-based sonar simulator for real-time applications](https://www.sciencedirect.com/science/article/pii/S0097849317301371)** ,and if you want a superficial overview or dont have access to science direct [Custom Shader and 3D Rendering for computationally efficient Sonar Simulation](http://sibgrapi.sid.inpe.br/col/sid.inpe.br/sibgrapi/2016/08.09.11.51/doc/sibgrapi16.pdf).

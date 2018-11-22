@@ -4,7 +4,7 @@
 
 <sensor name='FLSonar' type='camera'>
 
-    <plugin name="SonarVisual" filename="libFowardLookingGazeboSonar.so" >
+    <plugin name="SonarVisual" filename="libForwardLookingGazeboSonar.so" >
         <topic>car_sonar/FLSonar</topic>
         <debug>1</debug>
         <link_reference>car_sonar/test_link</link_reference>
@@ -18,8 +18,8 @@
             <format>R32G32B32</format>
         </image>
         <clip>
-            <near>0.1</near>
-            <far>5</far>
+            <near>3</near>
+            <far>15</far>
         </clip>
         <noise>
             <type>gaussian</type>
