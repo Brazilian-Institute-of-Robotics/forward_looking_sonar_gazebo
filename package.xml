@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>forward_looking_gazebo_sonar</name>
+  <name>forward_looking_sonar_gazebo</name>
   <version>0.0.0</version>
   <description>Forward Looking Sonar Package based on ROCKY package</description>
 
