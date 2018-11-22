@@ -3,11 +3,11 @@
   <!-- Loading concept -->
   <xacro:property name="concept" value="car_sonar"/>
   <!-- Loading vehicle's specific macros -->
-  <xacro:include filename="$(find  foward_looking_gazebo_sonar)/xacro/snippets_${concept}.xacro"/>
+  <xacro:include filename="$(find  forward_looking_sonar_gazebo)/xacro/snippets_${concept}.xacro"/>
   <!--
     Vehicle's parameters (remember to enter the model parameters below)
   -->
-  <xacro:property name="visual_mesh_file" value="file://$(find  foward_looking_gazebo_sonar)/meshes/Body_${concept}.stl"/>
+  <xacro:property name="visual_mesh_file" value="file://$(find  forward_looking_sonar_gazebo)/meshes/Body_${concept}.stl"/>
   <!-- Loading the UUV simulator ROS plugin macros -->
   <xacro:property name="mass" value="1000"/>
   <xacro:property name="cog" value="0 0 0"/>
@@ -68,18 +68,18 @@
     </link>
 
     <joint name="${namespace}/test_joint" type="revolute">
-      <origin xyz="0 0 3" rpy="0 ${pi/2} ${pi/2}"/>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <axis xyz="0 0 1" />
       <parent link="${namespace}/base_link" />
       <child link="${namespace}/test_link" />
       <limit upper="0" lower="0" effort="0" velocity="0" />
-      <axis xyz="1 0 0"/>
     </joint>
     
     <!-- Set up hydrodynamic plugin given as input parameter -->
     <xacro:insert_block name="gazebo"/>
     <!-- Include the thruster modules -->
-    <xacro:include filename="$(find foward_looking_gazebo_sonar)/xacro/actuators_car_sonar.xacro"/>
+    <xacro:include filename="$(find forward_looking_sonar_gazebo)/xacro/actuators_car_sonar.xacro"/>
     <!-- Include the sensor modules -->
-    <xacro:include filename="$(find foward_looking_gazebo_sonar)/xacro/sensors_car_sonar.xacro"/>
+    <xacro:include filename="$(find forward_looking_sonar_gazebo)/xacro/sensors_car_sonar.xacro"/>
   </xacro:macro>
 </robot>

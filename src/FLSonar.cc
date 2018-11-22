@@ -28,8 +28,8 @@
 #include "gazebo/rendering/Visual.hh"
 #include "gazebo/rendering/Conversions.hh"
 #include "gazebo/rendering/Scene.hh"
-#include "foward_looking_gazebo_sonar/FLSonar.hh"
-#include "foward_looking_gazebo_sonar/SDFTool.hh"
+#include "forward_looking_sonar_gazebo/FLSonar.hh"
+#include "forward_looking_sonar_gazebo/SDFTool.hh"
 
 namespace gazebo
 {

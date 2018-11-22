@@ -48,7 +48,7 @@
 
 <group ns="$(arg namespace)">
     <param name="robot_description"
-           command="$(find xacro)/xacro.py --inorder '$(find foward_looking_gazebo_sonar)/xacro/$(arg mode)_$(arg concept).xacro' debug:=$(arg debug) namespace:=$(arg namespace) concept:=$(arg concept)" /> -->   
+           command="$(find xacro)/xacro.py --inorder '$(find forward_looking_sonar_gazebo)/xacro/$(arg mode)_$(arg concept).xacro' debug:=$(arg debug) namespace:=$(arg namespace) concept:=$(arg concept)" /> -->   
 
     <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
           args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -model $(arg namespace) -param /$(arg namespace)/robot_description"/>

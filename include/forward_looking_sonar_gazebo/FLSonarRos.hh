@@ -20,7 +20,7 @@
 #include <cv_bridge/cv_bridge.h>
 
 // FLSonar Dependencies
-#include "foward_looking_gazebo_sonar/FLSonar.hh"
+#include "forward_looking_sonar_gazebo/FLSonar.hh"
 
 namespace gazebo
 {

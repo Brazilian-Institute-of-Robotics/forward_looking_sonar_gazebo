@@ -5,8 +5,8 @@
   <xacro:arg name="concept" default="car_sonar"/>
   <!-- -->
   <!-- Include the ROV macro file -->
-  <xacro:include filename="$(find foward_looking_gazebo_sonar)/xacro/base_$(arg concept).xacro"/>
-  <xacro:include filename="$(find foward_looking_gazebo_sonar)/xacro/gazebo_$(arg concept).xacro"/>
+  <xacro:include filename="$(find forward_looking_sonar_gazebo)/xacro/base_$(arg concept).xacro"/>
+  <xacro:include filename="$(find forward_looking_sonar_gazebo)/xacro/gazebo_$(arg concept).xacro"/>
   <!-- -->
   <!-- Create the car_sonar -->
   <xacro:car_sonar_base namespace="$(arg namespace)">

@@ -1,8 +1,8 @@
 // Copyright 2018 mccr_gazebo"
 
-#include "foward_looking_gazebo_sonar/FLSonarRos.hh"
+#include "forward_looking_sonar_gazebo/FLSonarRos.hh"
 
-#include "foward_looking_gazebo_sonar/SDFTool.hh"
+#include "forward_looking_sonar_gazebo/SDFTool.hh"
 
 #include <sensor_msgs/Range.h>
 
