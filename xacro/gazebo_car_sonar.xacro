@@ -19,7 +19,7 @@
         </image>
         <clip>
             <near>3</near>
-            <far>15</far>
+            <far>10</far>
         </clip>
         <noise>
             <type>gaussian</type>
