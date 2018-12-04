@@ -18,8 +18,8 @@
             <format>R32G32B32</format>
         </image>
         <clip>
-            <near>3</near>
-            <far>15</far>
+            <near>1</near>
+            <far>5</far>
         </clip>
         <noise>
             <type>gaussian</type>

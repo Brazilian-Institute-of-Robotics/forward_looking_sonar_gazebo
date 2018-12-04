@@ -74,6 +74,7 @@
       <child link="${namespace}/test_link" />
       <limit upper="0" lower="0" effort="0" velocity="0" />
     </joint>
+
     
     <!-- Set up hydrodynamic plugin given as input parameter -->
     <xacro:insert_block name="gazebo"/>
