@@ -524,8 +524,9 @@ void FLSonar::CvToSonarBin(std::vector<float> &_accumData)
       float intensity = (1.0 / this->sonarBinsDepth[bin_idx]) * this->Sigmoid(roi.at<cv::Vec3f>(xIndex, yIndex)[0]);
       this->bins[bin_idx] += intensity;
     }
-    int id_beam = ((-this->vfov / 2 + i_beam * this->vfov / this->beamCount + M_PI)
-      / (2 * M_PI)) * (this->beamCount - 1);
+    int id_beam = static_cast<int>(((-this->vfov / 2 + i_beam * this->vfov
+      / this->beamCount + this->vfov / 2)
+      / (this->vfov)) * (this->beamCount));
     for (size_t i = 0; i < this->binCount; ++i)
       _accumData[id_beam * this->binCount + i] = this->bins[i];
   }
@@ -559,7 +560,7 @@ void FLSonar::GenerateTransferTable(std::vector<int> &_transfer)
       point.y = point.y * static_cast<float>(this->binCount / (this->sonarImage.rows * 0.5));
 
       double radius = sqrt(point.x * point.x + point.y * point.y);
-      double theta = atan2(-point.x, -point.y);
+      double theta = atan2(point.x, -point.y);
 
       // pixels out the sonar image
       if (radius > this->binCount || !radius || theta < -this->vfov / 2 || theta > this->vfov / 2)
@@ -569,7 +570,8 @@ void FLSonar::GenerateTransferTable(std::vector<int> &_transfer)
       else
       {
         this->sonarImageMask.at<uchar>(j, i) = 255;
-        int idBeam = static_cast<int>(((theta + M_PI) / (2 * M_PI)) * (this->beamCount - 1));
+        int idBeam = static_cast<int>(((theta + this->vfov / 2) / (this->vfov)) * (this->beamCount));
+        // int idBeam = static_cast<int>(((theta + M_PI) / (2 * M_PI)) * (this->beamCount - 1));
         _transfer.push_back(idBeam * this->binCount + static_cast<float>(radius));
       }
     }

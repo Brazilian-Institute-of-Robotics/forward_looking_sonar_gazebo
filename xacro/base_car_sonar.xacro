@@ -15,8 +15,6 @@
   <xacro:property name="rho" value="1028"/>
   <!-- Vehicle macro -->
   <xacro:macro name="car_sonar_base" params="namespace *gazebo">
-    
-    <link name="world"/>
     <!-- Rigid body description of the base link -->
     <link name="${namespace}/base_link">
       <!--
@@ -77,11 +75,6 @@
       <limit upper="0" lower="0" effort="0" velocity="0" />
     </joint>
 
-    <joint name="${namespace}/fixed_joint" type="fixed">
-      <origin xyz="3.5 -1 5" rpy="0 ${1*pi/10} 0"/>
-      <parent link="world" />
-      <child link="${namespace}/base_link" />
-    </joint>
     
     <!-- Set up hydrodynamic plugin given as input parameter -->
     <xacro:insert_block name="gazebo"/>
