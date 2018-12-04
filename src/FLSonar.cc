@@ -65,10 +65,16 @@ void FLSonar::Load(sdf::ElementPtr _sdf)
 
   this->SetVertFOV(_sdf->Get<double>("vfov"));
 
+  this->SetHorzFOV(_sdf->Get<double>("horizontal_fov"));
+
+  double aspectRatio = this->HorzFOV() / this->VertFOV();
+
   Ogre::Radian fov_now(this->vfov);
   this->camera->setFOVy(fov_now);
-  this->camera->setAspectRatio(1.0);
+  this->camera->setAspectRatio(aspectRatio);
   this->camera->setAutoAspectRatio(0);
+
+  this->SetHorzFOV(this->GetVertFOV() * aspectRatio);
 
 
 
@@ -319,15 +325,33 @@ double FLSonar::GetVertFOV() const
 }
 
 //////////////////////////////////////////////////
+double FLSonar::GetHorzFOV() const
+{
+  return this->HorzFOV();
+}
+
+//////////////////////////////////////////////////
 double FLSonar::VertFOV() const
 {
   return this->vfov;
 }
 
 //////////////////////////////////////////////////
+double FLSonar::HorzFOV() const
+{
+  return this->hfov;
+}
+
+//////////////////////////////////////////////////
 void FLSonar::SetVertFOV(const double _vfov)
 {
   this->vfov = _vfov;
+}
+
+//////////////////////////////////////////////////
+void FLSonar::SetHorzFOV(const double _hfov)
+{
+  this->hfov = _hfov;
 }
 
 
@@ -524,9 +548,10 @@ void FLSonar::CvToSonarBin(std::vector<float> &_accumData)
       float intensity = (1.0 / this->sonarBinsDepth[bin_idx]) * this->Sigmoid(roi.at<cv::Vec3f>(xIndex, yIndex)[0]);
       this->bins[bin_idx] += intensity;
     }
-    int id_beam = static_cast<int>(((-this->vfov / 2 + i_beam * this->vfov
-      / this->beamCount + this->vfov / 2)
-      / (this->vfov)) * (this->beamCount));
+    int id_beam = static_cast<int>(((-this->HorzFOV() / 2 + i_beam * this->HorzFOV()
+      / this->beamCount + this->HorzFOV() / 2)
+      / (this->HorzFOV())) * (this->beamCount));
+
     for (size_t i = 0; i < this->binCount; ++i)
       _accumData[id_beam * this->binCount + i] = this->bins[i];
   }
@@ -563,15 +588,14 @@ void FLSonar::GenerateTransferTable(std::vector<int> &_transfer)
       double theta = atan2(point.x, -point.y);
 
       // pixels out the sonar image
-      if (radius > this->binCount || !radius || theta < -this->vfov / 2 || theta > this->vfov / 2)
+      if (radius > this->binCount || !radius || theta < -this->HorzFOV() / 2 || theta > this->HorzFOV() / 2)
         _transfer.push_back(-1);
 
       // pixels in the sonar image
       else
       {
         this->sonarImageMask.at<uchar>(j, i) = 255;
-        int idBeam = static_cast<int>(((theta + this->vfov / 2) / (this->vfov)) * (this->beamCount));
-        // int idBeam = static_cast<int>(((theta + M_PI) / (2 * M_PI)) * (this->beamCount - 1));
+        int idBeam = static_cast<int>(((theta + this->HorzFOV() / 2) / (this->HorzFOV())) * (this->beamCount));
         _transfer.push_back(idBeam * this->binCount + static_cast<float>(radius));
       }
     }

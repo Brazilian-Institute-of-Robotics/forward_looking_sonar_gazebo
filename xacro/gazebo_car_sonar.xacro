@@ -8,7 +8,7 @@
         <topic>car_sonar/FLSonar</topic>
         <debug>1</debug>
         <link_reference>car_sonar/test_link</link_reference>
-        <horizontal_fov>${pi/2}</horizontal_fov>
+        <horizontal_fov>${pi/4}</horizontal_fov>
         <vfov>${pi/4}</vfov>
         <bin_count>720</bin_count>
         <beam_count>720</beam_count>
