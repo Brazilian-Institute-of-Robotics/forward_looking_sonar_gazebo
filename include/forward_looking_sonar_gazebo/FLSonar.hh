@@ -102,6 +102,22 @@ public:
 public:
   double VertFOV() const;
 
+  /// \brief Get the horizontal field-of-view.
+  /// \return The horizontal field of view of the sonar sensor.
+  /// \deprecated See HorzFOV()
+public:
+  double GetHorzFOV() const;
+
+  /// \brief Get the horizontal field-of-view.
+  /// \return The horizontal field of view of the sonar sensor.
+public:
+  double HorzFOV() const;
+
+  /// \brief Set the horizontal fov
+  /// \param[in] _hfov horizontal fov
+public:
+  void SetHorzFOV(const double _hfov);
+
   /// \brief Get near clip
   /// \return near clip distance
   /// \deprecated See NearClip()
@@ -320,6 +336,10 @@ protected:
   /// \brief Vertical field-of-view.
 protected:
   double vfov;
+
+/// \brief Horizontal field-of-view.
+protected:
+  double hfov;
 
 
   /// \brief Near clip plane.
