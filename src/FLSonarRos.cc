@@ -131,7 +131,6 @@ void FLSonarRos::OnPostRender()
     this->sonarImagePub.publish(msg);
 
     this->sonarMsgPub.publish(this->sonar->SonarRosMsg(this->world));
-
   }
 
   // Publish shader image

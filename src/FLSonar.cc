@@ -464,8 +464,6 @@ void FLSonar::SetBeamCount(const int &_value)
 bool FLSonar::SetProjectionType(const std::string &_type)
 {
   bool result = true;
-
-
   this->camera->setProjectionType(Ogre::PT_PERSPECTIVE);
   this->camera->setCustomProjectionMatrix(false);
   this->scene->SetShadowsEnabled(false);
@@ -485,7 +483,7 @@ void FLSonar::PreRender(const math::Pose &_pose)
 //////////////////////////////////////////////////
 void FLSonar::UpdateData()
 {
-  if(!this->bUpdated)
+  if (!this->bUpdated)
   {
     this->ImageTextureToCV(this->imageWidth, this->imageHeight, this->camTexture);
     this->accumData.assign(this->binCount * this->beamCount, 0.0);
@@ -616,7 +614,6 @@ void FLSonar::GenerateTransferTable(std::vector<int> &_transfer)
 //////////////////////////////////////////////////
 sonar_msgs::SonarStamped FLSonar::SonarRosMsg(gazebo::physics::WorldPtr _world)
 {
-  
   this->UpdateData();
 
   sonar_msgs::SonarStamped sonarOutput;
