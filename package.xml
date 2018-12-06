@@ -29,6 +29,7 @@
   <build_depend>opencv3</build_depend>
   <build_depend>roslint</build_depend>
   <build_depend>gazebo_dev</build_depend>
+  <build_depend>sonar_msgs</build_depend>
 
   <buildtool_depend>catkin</buildtool_depend>
 

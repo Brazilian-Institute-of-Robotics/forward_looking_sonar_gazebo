@@ -96,6 +96,9 @@ private:
   // Image transport publisher for shader image
   image_transport::Publisher shaderImagePub;
 
+  // Sonar message pub
+  ros::Publisher sonarMsgPub;
+
   // Debug flag
   bool bDebug;
 };
