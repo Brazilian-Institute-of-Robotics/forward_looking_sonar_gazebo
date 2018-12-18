@@ -6,6 +6,8 @@
 
 #include <sensor_msgs/Range.h>
 
+#include <sonar_msgs/SonarStamped.h>
+
 
 namespace gazebo
 {
@@ -78,6 +80,9 @@ void FLSonarRos::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
   this->sonarImagePub = this->sonarImageTransport->advertise(_sdf->Get<std::string>("topic"), 1);
 
+  this->sonarMsgPub = this->rosNode->advertise<sonar_msgs::SonarStamped>(
+                                    _sdf->Get<std::string>("topic") + "/beams_fls", 0);
+
   this->bDebug = false;
   if (_sdf->HasElement("debug"))
   {
@@ -124,6 +129,8 @@ void FLSonarRos::OnPostRender()
 
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", B).toImageMsg();
     this->sonarImagePub.publish(msg);
+
+    this->sonarMsgPub.publish(this->sonar->SonarRosMsg(this->world));
   }
 
   // Publish shader image

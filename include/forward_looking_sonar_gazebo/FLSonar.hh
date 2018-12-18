@@ -14,9 +14,13 @@
 #include "gazebo/rendering/Camera.hh"
 #include "gazebo/rendering/RenderTypes.hh"
 #include "gazebo/util/system.hh"
+#include "sonar_msgs/SonarStamped.h"
+
+#include <gazebo/physics/physics.hh>
 
 // OpenCV includes
 #include <opencv2/opencv.hpp>
+
 
 namespace Ogre
 {
@@ -224,6 +228,20 @@ public:
   void GetSonarImage();
 
   /**
+   * @brief Get the Ros sonar msg
+   *
+   */
+public:
+  sonar_msgs::SonarStamped SonarRosMsg(const physics::WorldPtr _world);
+
+  /**
+   * @brief Update the data for the sonar
+   *
+   */
+public:
+  void UpdateData();
+
+  /**
    * @brief Cv mat to sonar bin data
    *
    * @param _accumData vector with all image data
@@ -397,6 +415,14 @@ protected:
   //// \brief Number of beams
 protected:
   int beamCount;
+
+  //// \brief Data from sensor
+protected:
+  std::vector<float> accumData;
+
+/// \brief Flag to check if the message was updated.
+private:
+  bool bUpdated;
 
   //// \brief Sonar image from ogre
   Ogre::Image imgSonar;
