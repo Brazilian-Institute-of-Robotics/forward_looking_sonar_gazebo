@@ -612,7 +612,7 @@ void FLSonar::GenerateTransferTable(std::vector<int> &_transfer)
 }
 
 //////////////////////////////////////////////////
-sonar_msgs::SonarStamped FLSonar::SonarRosMsg(gazebo::physics::WorldPtr _world)
+sonar_msgs::SonarStamped FLSonar::SonarRosMsg(const gazebo::physics::WorldPtr _world)
 {
   this->UpdateData();
 

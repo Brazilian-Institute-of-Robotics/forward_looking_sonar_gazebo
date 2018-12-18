@@ -232,7 +232,7 @@ public:
    *
    */
 public:
-  sonar_msgs::SonarStamped SonarRosMsg(physics::WorldPtr _world);
+  sonar_msgs::SonarStamped SonarRosMsg(const physics::WorldPtr _world);
 
   /**
    * @brief Update the data for the sonar
