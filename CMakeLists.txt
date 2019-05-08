@@ -70,7 +70,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN "*~" EXCLUDE
 )
 
-install(DIRECTORY media launch include test xacro
+install(DIRECTORY media launch test xacro
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
