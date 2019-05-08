@@ -70,6 +70,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN "*~" EXCLUDE
 )
 
+install(DIRECTORY media launch include test xacro
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
 if (CATKIN_ENABLE_TESTING)
   find_package(cmake_modules)
   find_package(rostest REQUIRED)
