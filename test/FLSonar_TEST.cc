@@ -19,6 +19,97 @@ class Sonar_TEST: public RenderingFixture
 {
 protected:
 
+  void GetBox(gazebo::common::Mesh* _mesh)
+  {
+    int i, k;
+    _mesh->SetName("unit_box");
+
+    gazebo::common::SubMesh *subMesh = new gazebo::common::SubMesh();
+    _mesh->AddSubMesh(subMesh);
+
+    // Vertex values
+    float v[8][3] =
+    {
+      {-1, -1, -1},
+      {-1, -1, +1},
+      {+1, -1, +1},
+      {+1, -1, -1},
+      {-1, +1, -1},
+      {-1, +1, +1},
+      {+1, +1, +1},
+      {+1, +1, -1}
+    };
+
+    // Normals for each face
+    float n[6][3]=
+    {
+      {+0, +1, +0},
+      {+0, 1, +0},
+      {+0, +0, -1},
+      {+1, +0, +0},
+      {+0, +0, +1},
+      {-1, +0, +0},
+    };
+
+    // Texture coords
+    double t[4][2] =
+    {
+      {1, 0}, {0, 0}, {0, 1},
+      {1, 1}
+    };
+
+    // Vertices
+    int faces[6][4] =
+    {
+      {2, 1, 0, 3}, {5, 6, 7, 4},
+      {2, 6, 5, 1}, {1, 5, 4, 0},
+      {0, 4, 7, 3}, {6, 2, 3, 7}
+    };
+
+    // Indices
+    int ind[36] =
+    {
+      0, 1, 2,
+      2, 3, 0,
+      4, 5, 7,
+      7, 5, 6,
+      11, 8, 9,
+      9, 10, 11,
+      12, 13, 15,
+      15, 13, 14,
+      16, 17, 18,
+      18, 19, 16,
+      21, 22, 23,
+      23, 20, 21,
+    };
+
+    // Compute the vertices
+    for (i = 0; i < 8; ++i)
+    {
+      v[i][0] *= 1 * 0.5;
+      v[i][1] *= 1 * 0.5;
+      v[i][2] *= 1 * 0.5;
+    }
+
+    // For each face
+    for (i = 0; i < 6; ++i)
+    {
+      // For each vertex in the face
+      for (k = 0; k < 4; k++)
+      {
+        subMesh->AddVertex(v[faces[i][k]][0],
+                          v[faces[i][k]][1],
+                          v[faces[i][k]][2]);
+        subMesh->AddNormal(n[i][0], n[i][1], n[i][2]);
+        subMesh->AddTexCoord(t[k][0], t[k][1]);
+      }
+    }
+
+    // Set the indices
+    for (i = 0; i < 36; ++i)
+      subMesh->AddIndex(ind[i]);
+  }
+
   void SpawnOgreSphere(gazebo::rendering::ScenePtr _scene, gazebo::math::Vector3 _pose)
   {
     Ogre::SceneManager *sceneManager= _scene->OgreSceneManager();
@@ -80,7 +171,8 @@ protected:
     sceneNode->setPosition(_pose.x,_pose.y,_pose.z);
   }
 
-  void SpawnOgreCube(gazebo::rendering::ScenePtr _scene, gazebo::math::Vector3 _pose)
+  void SpawnOgreCube(gazebo::rendering::ScenePtr _scene, gazebo::math::Vector3 _pose,
+    gazebo::math::Vector3 _scale = {1, 1, 1})
   {
     Ogre::SceneManager *sceneManager= _scene->OgreSceneManager();
 
@@ -90,22 +182,28 @@ protected:
 
 
     //Add the mesh into OGRE
-    if (!sceneNode->getCreator()->hasEntity("unit_cube") &&
-        common::MeshManager::Instance()->HasMesh("unit_cube"))
+    if (!sceneNode->getCreator()->hasEntity("unit_plane") &&
+        common::MeshManager::Instance()->HasMesh("unit_plane"))
     {
       const common::Mesh *mesh =
-        common::MeshManager::Instance()->GetMesh("unit_cube");
+        common::MeshManager::Instance()->GetMesh("unit_plane");
+
+      // common::Mesh *mesh = new common::Mesh();
+      // GetBox(mesh);
+
       _scene->WorldVisual()->InsertMesh(mesh);
     }
 
     Ogre::Entity *obj = _scene->OgreSceneManager()->createEntity(
-                      "VISUAL__cube", "unit_cube");
+                      "VISUAL__box", "unit_plane");
 
     obj->setMaterialName("Gazebo/Blue");
     obj->setVisibilityFlags(GZ_VISIBILITY_ALL);
     sceneNode->attachObject(obj);
     sceneNode->setVisible(true);
     sceneNode->setPosition(_pose.x,_pose.y,_pose.z);
+    sceneNode->setOrientation (0.7, 0, 0.7, 0);
+    sceneNode->setScale(_scale.x,_scale.y,_scale.z);
   }
 
   void ApplyMask(cv::Mat &_image,cv::Mat &_mask)
@@ -330,7 +428,7 @@ TEST_F(Sonar_TEST, SphereDraw)
 
   cv::Mat B = cv::Mat::zeros(shaderOutput.rows, shaderOutput.cols, CV_8UC3);
   shaderOutput.convertTo(B,CV_8UC3,255);
-  cv::imwrite("teste2.png",B);
+  // cv::imwrite("teste2.png",B);
 
   ASSERT_TRUE(CompareImages(shaderOutput,shaderRef,5e-3));
 }
@@ -418,9 +516,103 @@ TEST_F(Sonar_TEST, ConeDraw)
 
   cv::Mat B = cv::Mat::zeros(shaderOutput.rows, shaderOutput.cols, CV_8UC3);
   shaderOutput.convertTo(B,CV_8UC3,255);
-  cv::imwrite("teste2.png",B);
+  // cv::imwrite("teste2.png",B);
 
   ASSERT_TRUE(CompareImages(shaderOutput,shaderRef,5e-3));
+}
+
+/////////////////////////////////////////////////
+TEST_F(Sonar_TEST, CubeDrawn)
+{
+  std::string programsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/programs";
+  gazebo::common::SystemPaths::Instance()->AddGazeboPaths(programsFolder.c_str());
+
+  std::string materialsFolder = std::string(OGRE_MEDIA_PATH) + "/materials/scripts";
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+          materialsFolder.c_str(), "FileSystem", "General", true);
+
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+          programsFolder.c_str(), "FileSystem", "General", true);
+
+  Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(
+          "General");
+
+
+  Load("worlds/heightmap.world",false);
+
+  gazebo::rendering::ScenePtr scene = gazebo::rendering::get_scene("default");
+
+  if (!scene)
+      scene = gazebo::rendering::create_scene("default", true);
+
+  SetUp();
+  ASSERT_TRUE(scene != nullptr);
+
+
+  std::stringstream newSonarSS;
+  newSonarSS <<"<sdf version='1.6'>"
+      << "<plugin name='SonarVisual' filename='libfl_sonar_ros.so' >"
+      << "<horizontal_fov>2.0943951023931953</horizontal_fov>"
+      << "<vfov>2.0943951023931953</vfov>"
+      << "<bin_count>1200</bin_count>"
+      << "<beam_count>1200</beam_count>"
+      << "<image>"
+      << "  <width>1200</width>"
+      << "  <height>1200</height>"
+      << "  <format>R32G32B32</format>"
+      << "</image>"
+      << "<clip>"
+      << "  <near>0.01</near>"
+      << "  <far>15</far>"
+      << "</clip>"
+      << "</plugin>"
+      << "</sdf>";
+
+  sdf::ElementPtr FLSonarSDF(new sdf::Element);
+  sdf::initFile("plugin.sdf", FLSonarSDF);
+  sdf::readString(newSonarSS.str(), FLSonarSDF);
+
+  rendering::FLSonar *flSonar = new rendering::FLSonar("test_sonar",scene,false);
+  flSonar->Init();
+  flSonar->Load(FLSonarSDF);
+  gzwarn << "Image Width " << flSonar->ImageWidth() << std::endl;
+  flSonar->CreateTexture("GPUTexture");
+
+  ignition::math::Pose3d sonarPose(0,0,0,0,0,0);
+
+  // SpawnSphere("ball",
+  //   math::Vector3(0,0,0), math::Vector3(0,0,0),
+  //   true, true);
+  
+  SpawnOgreCube(scene,math::Vector3(4,0,0), math::Vector3(7,7,0));
+
+  // common::Time::MSleep(3000);
+
+
+  flSonar->PreRender(sonarPose);
+  flSonar->RenderImpl();
+  flSonar->GetSonarImage();
+  flSonar->PostRender();
+
+  cv::Mat shaderOutput = flSonar->ShaderImage();
+  cv::Mat shaderMask = cv::Mat::zeros(shaderOutput.rows,shaderOutput.cols, CV_8UC1);
+  cv::Mat shaderRef = cv::Mat::zeros(shaderOutput.rows,shaderOutput.cols, CV_32FC3);
+
+  GetCVValuesSphere(shaderRef,shaderMask);
+
+  cv::Mat sonarImage = flSonar->SonarImage();
+
+  // ApplyMask(shaderOutput,shaderMask);
+
+  cv::Mat B = cv::Mat::zeros(shaderOutput.rows, shaderOutput.cols, CV_8UC3);
+  shaderOutput.convertTo(B,CV_8UC3,255);
+  cv::imwrite("teste2.png",B);
+
+  cv::Mat C = cv::Mat::zeros(sonarImage.rows, sonarImage.cols, CV_8UC3);
+  sonarImage.convertTo(C,CV_8UC3,255);
+  cv::imwrite("teste2_sonar.png",C);
+
+  ASSERT_TRUE(true);
 }
 
 /////////////////////////////////////////////////

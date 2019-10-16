@@ -5,6 +5,7 @@
 #include <ignition/math/Helpers.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
+#include <glm/gtc/matrix_transform.hpp>
 
 #ifndef _WIN32
 #include <dirent.h>
@@ -30,6 +31,9 @@
 #include "gazebo/rendering/Scene.hh"
 #include "forward_looking_sonar_gazebo/FLSonar.hh"
 #include "forward_looking_sonar_gazebo/SDFTool.hh"
+
+// GLM stuff
+#include "glm/gtx/string_cast.hpp"
 
 namespace gazebo
 {
@@ -74,8 +78,12 @@ void FLSonar::Load(sdf::ElementPtr _sdf)
   this->camera->setFOVy(fov_now);
   this->camera->setAspectRatio(aspectRatio);
   this->camera->setAutoAspectRatio(0);
+  this->camera->setProjectionType(Ogre::ProjectionType::PT_PERSPECTIVE);
 
   this->SetHorzFOV(this->GetVertFOV() * aspectRatio);
+  // this->camera->setFocalLength(1);
+
+  gzwarn << "Focal length: " << this->camera->getFocalLength () << std::endl;
 
 
 
@@ -87,6 +95,25 @@ void FLSonar::Load(sdf::ElementPtr _sdf)
 
   this->SetBinCount(gazebo::SDFTool::GetSDFElement<double>(_sdf, "bin_count"));
   this->SetBeamCount(gazebo::SDFTool::GetSDFElement<double>(_sdf, "beam_count"));
+
+  // Ogre::Matrix4 projection_matrix = this->camera->getProjectionMatrix();
+  // Ogre::Matrix4 view_matrix = this->camera->getViewMatrix();
+  // gzwarn << projection_matrix << std::endl;
+  // gzwarn << "Ogre view" << view_matrix << std::endl;
+  // glm::mat4 Projection = glm::perspective(double(glm::radians<float>(120.0f)), double(1.), double(0.1), double(15));
+  // gzwarn << "GLM " << glm::to_string(Projection) << std::endl;
+  // glm::mat4 View = glm::lookAt(
+  //   glm::vec3(0,0,0), // Camera is at (4,3,3), in World Space
+  //   glm::vec3(4,0,0), // and looks at the origin
+  //   glm::vec3(0,0,1)  // Head is up (set to 0,-1,0 to look upside-down)
+  //   );
+  // gzwarn << "View matrix " << glm::to_string(View) << std::endl;
+  // glm::vec4 my_vec = Projection * View * glm::vec4(4,3.5,0,1);
+  // gzwarn << "Vector out " << glm::to_string(my_vec) << std::endl;
+  // Ogre::Vector4 my_vec_ogre = projection_matrix * view_matrix * Ogre::Vector4(4,3.5,0,1);
+  // gzwarn << "Ogre projection " << my_vec_ogre << std::endl;
+
+  this->camera->setNearClipDistance(this->NearClip());
 }
 
 //////////////////////////////////////////////////
@@ -502,10 +529,11 @@ void FLSonar::GetSonarImage()
   this->sonarImageMask = cv::Mat::zeros(sonarImageWidth, sonarImageHeight, CV_8UC1);
 
 
-  // this->DebugPrintImageChannelToFile("TesteBlue.dat", this->rawImage,0);
-  // this->DebugPrintImageChannelToFile("TesteGreen.dat", this->rawImage,1);
-
   this->UpdateData();
+
+  this->DebugPrintImageChannelToFile("TesteBlue.dat", this->rawImage,0);
+  this->DebugPrintImageChannelToFile("TesteGreen.dat", this->rawImage,1);
+
 
   // this->DebugPrintMatrixToFile<float>("Teste2.dat", this->accumData);
 
@@ -516,7 +544,7 @@ void FLSonar::GetSonarImage()
   this->sonarImageMask.setTo(0);
   this->GenerateTransferTable(transferTable);
 
-  // this->DebugPrintMatrixToFile<int>("Teste3.dat", transferTable);
+  this->DebugPrintMatrixToFile<int>("Teste3.dat", transferTable);
 
   this->TransferTableToSonar(this->accumData, transferTable);
 }
@@ -526,14 +554,20 @@ void FLSonar::CvToSonarBin(std::vector<float> &_accumData)
 {
   for (int i_beam = 0; i_beam < this->beamCount - 1; i_beam++)
   {
+    // gzwarn << "Here: imageWidth: " << this->imageWidth << "image columns: " << this->rawImage.cols << std::endl;
     cv::Mat roi = this->rawImage(cv::Rect(i_beam * ceil(this->imageWidth / this->beamCount), 0,
       ceil(this->imageWidth / this->beamCount), this->rawImage.rows));
+    // gzwarn << "After here" << std::endl;
 
 
     this->sonarBinsDepth.assign(this->binCount, 0);
 
     unsigned int width = roi.rows;
     unsigned int height = roi.cols;
+
+    cv::Mat B = cv::Mat::zeros(roi.rows, roi.cols, CV_8UC3);
+    roi.convertTo(B,CV_8UC3,255);
+    cv::imwrite("teste_roi_beam"+ std::to_string(i_beam) + ".png",B);
 
 
 
@@ -542,8 +576,10 @@ void FLSonar::CvToSonarBin(std::vector<float> &_accumData)
     for (int i = 0; i < width * height; i++)
     {
       int xIndex = i / height;
-      int yIndex = (i % height) / height * width;
-      int bin_idx = roi.at<cv::Vec3f>(xIndex, yIndex)[1] * (this->binCount - 1);
+      int yIndex = static_cast<int>((i % height) / height * width);
+      int bin_idx = static_cast<int>(roi.at<cv::Vec3f>(xIndex, yIndex)[1] * (this->binCount - 1));
+      // if(roi.at<cv::Vec3f>(xIndex, yIndex)[0] > 0.5)
+      //   gzwarn << "Beam " << i_beam << " and bins " << bin_idx << " with value: " << roi.at<cv::Vec3f>(xIndex, yIndex)[0] <<  std::endl;
       this->sonarBinsDepth[bin_idx]++;
     }
 
@@ -552,14 +588,16 @@ void FLSonar::CvToSonarBin(std::vector<float> &_accumData)
     for (int i = 0; i < width * height; i++)
     {
       int xIndex = i / height;
-      int yIndex = (i % height) / height * width;
-      int bin_idx = roi.at<cv::Vec3f>(xIndex, yIndex)[1] * (this->binCount - 1);
-      float intensity = (1.0 / this->sonarBinsDepth[bin_idx]) * this->Sigmoid(roi.at<cv::Vec3f>(xIndex, yIndex)[0]);
+      int yIndex = static_cast<int>((i % height) / height * width);
+      int bin_idx = static_cast<int>(roi.at<cv::Vec3f>(xIndex, yIndex)[1] * (this->binCount - 1));
+      float intensity = 1;// (1.0 / this->sonarBinsDepth[bin_idx]) * roi.at<cv::Vec3f>(xIndex, yIndex)[0] * this->Sigmoid(roi.at<cv::Vec3f>(xIndex, yIndex)[0]);
       this->bins[bin_idx] += intensity;
     }
-    int id_beam = static_cast<int>(((-this->HorzFOV() / 2 + i_beam * this->HorzFOV()
-      / this->beamCount + this->HorzFOV() / 2)
-      / (this->HorzFOV())) * (this->beamCount));
+    // int id_beam = static_cast<int>(((-this->HorzFOV() / 2 + i_beam * this->HorzFOV()
+    //   / this->beamCount + this->HorzFOV() / 2)
+    //   / (this->HorzFOV())) * (this->beamCount));
+
+    int id_beam = i_beam;
 
     for (size_t i = 0; i < this->binCount; ++i)
       _accumData[id_beam * this->binCount + i] = this->bins[i];

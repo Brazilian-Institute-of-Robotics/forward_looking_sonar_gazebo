@@ -80,9 +80,12 @@ if (CATKIN_ENABLE_TESTING)
   find_package(TinyXML REQUIRED)
   find_package(GAZEBO REQUIRED)
   find_package(OpenCV REQUIRED)
+  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+  find_package(GLM REQUIRED)
 
   include_directories(include ${catkin_INCLUDE_DIRS}
     ${GAZEBO_INCLUDE_DIRS}
+    ${GLM_INCLUDE_DIRS}
     ${TinyXML_INCLUDE_DIRS})
 
   link_directories(
@@ -93,7 +96,7 @@ if (CATKIN_ENABLE_TESTING)
   target_link_libraries(gazebo_test_fixture ${GAZEBO_LIBRARIES})
 
   add_rostest_gtest(FLSonar_TEST test/pure_gazebo_test.test test/FLSonar_TEST.cc)
-  target_link_libraries(FLSonar_TEST gazebo_test_fixture ${GAZEBO_LIBRARIES} gtest ${OpenCV_LIBRARIES} ${FORWARD_LOOKING_SONAR_GAZEBO_LIST})
+  target_link_libraries(FLSonar_TEST gazebo_test_fixture ${GAZEBO_LIBRARIES} gtest ${OpenCV_LIBRARIES} ${FORWARD_LOOKING_SONAR_GAZEBO_LIST} ${GLM_LIBRARIES})
   #Add Media Path
   set_target_properties(FLSonar_TEST PROPERTIES COMPILE_DEFINITIONS "OGRE_MEDIA_PATH=\"${PROJECT_SOURCE_DIR}/media\"")
 

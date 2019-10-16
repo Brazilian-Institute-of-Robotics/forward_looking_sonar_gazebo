@@ -8,18 +8,20 @@
         <topic>car_sonar/FLSonar</topic>
         <debug>1</debug>
         <link_reference>car_sonar/test_link</link_reference>
-        <horizontal_fov>${pi/4}</horizontal_fov>
-        <vfov>${pi/4}</vfov>
-        <bin_count>720</bin_count>
-        <beam_count>720</beam_count>
+        <horizontal_fov>${pi/2}</horizontal_fov>
+        <!-- <horizontal_fov>${2*pi/3}</horizontal_fov> -->
+        <!-- <horizontal_fov>${pi/4}</horizontal_fov> -->
+        <vfov>${pi/2}</vfov>
+        <bin_count>1200</bin_count>
+        <beam_count>1200</beam_count>
         <image>
-            <width>720</width>
-            <height>720</height>
+            <width>1200</width>
+            <height>1200</height>
             <format>R32G32B32</format>
         </image>
         <clip>
-            <near>1</near>
-            <far>5</far>
+            <near>0.1</near>
+            <far>10</far>
         </clip>
         <noise>
             <type>gaussian</type>
