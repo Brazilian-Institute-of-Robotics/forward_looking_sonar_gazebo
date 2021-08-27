@@ -17,12 +17,16 @@ jobs:
     container:
       image: ${{ matrix.docker_image }}
     steps:
+      - name: Get the code
+        uses: actions/checkout@v2
       - name: setup ROS environment
         uses: ros-tooling/setup-ros@v0.2
         with:
           required-ros-distributions: ${{ matrix.ros_distro }}
+      - run: mv deps.repos /tmp  # mv dep.repos to /tmp to be used later
       - name: build and test
         uses: ros-tooling/action-ros-ci@v0.2
         with:
           package-name: forward_looking_sonar_gazebo
           target-ros1-distro: ${{ matrix.ros_distro }}
+          vcs-repo-file-url: "/tmp/deps.repos"  # ensure updated dep.repos from source branch
