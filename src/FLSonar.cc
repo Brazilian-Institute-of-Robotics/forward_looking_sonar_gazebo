@@ -473,11 +473,9 @@ bool FLSonar::SetProjectionType(const std::string &_type)
 }
 
 //////////////////////////////////////////////////
-void FLSonar::PreRender(const math::Pose &_pose)
+void FLSonar::PreRender(const ignition::math::Pose3d &_pose)
 {
-  ignition::math::Pose3d poseIgnition(_pose.pos.x, _pose.pos.y, _pose.pos.z,
-    _pose.rot.w, _pose.rot.x, _pose.rot.y, _pose.rot.z);
-  this->SetWorldPose(poseIgnition);
+  this->SetWorldPose(_pose);
 }
 
 //////////////////////////////////////////////////
@@ -617,8 +615,13 @@ sonar_msgs::SonarStamped FLSonar::SonarRosMsg(const gazebo::physics::WorldPtr _w
   this->UpdateData();
 
   sonar_msgs::SonarStamped sonarOutput;
-  sonarOutput.header.stamp.sec = _world->GetSimTime().sec;
-  sonarOutput.header.stamp.nsec = _world->GetSimTime().nsec;
+#if GAZEBO_MAJOR_VERSION >= 8
+  auto world_sim_time = _world->SimTime();
+#else
+  auto world_sim_time = _world->GetSimTime();
+#endif
+  sonarOutput.header.stamp.sec = world_sim_time.sec;
+  sonarOutput.header.stamp.nsec = world_sim_time.nsec;
   sonarOutput.num_bins = this->binCount;
   sonarOutput.num_beams = this->beamCount;
   sonarOutput.beams_width = this->HorzFOV();
