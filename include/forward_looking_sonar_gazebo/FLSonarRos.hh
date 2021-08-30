@@ -1,6 +1,7 @@
 // Copyright 2018 Brazilian Intitute of Robotics"
 
 #include <functional>
+#include <memory>
 #include <boost/scoped_ptr.hpp>
 #include <math.h>
 
