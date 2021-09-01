@@ -89,9 +89,6 @@ if (CATKIN_ENABLE_TESTING)
     ${GAZEBO_LIBRARY_DIRS}
   )
 
-  add_library(gazebo_test_fixture EXCLUDE_FROM_ALL test/ServerFixture.cc)
-  target_link_libraries(gazebo_test_fixture ${GAZEBO_LIBRARIES})
-
   add_rostest_gtest(FLSonar_TEST test/pure_gazebo_test.test test/FLSonar_TEST.cc)
   target_link_libraries(FLSonar_TEST gazebo_test_fixture ${GAZEBO_LIBRARIES} gtest ${OpenCV_LIBRARIES} ${FORWARD_LOOKING_SONAR_GAZEBO_LIST})
   #Add Media Path

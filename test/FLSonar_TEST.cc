@@ -8,6 +8,7 @@
 #include "gazebo/rendering/ogre_gazebo.h"
 #include "gazebo/test/ServerFixture.hh"
 #include "gazebo/common/MeshManager.hh"
+#include "ignition/math/Vector3.hh"
 
 #include <forward_looking_sonar_gazebo/FLSonar.hh>
 
@@ -19,7 +20,7 @@ class Sonar_TEST: public RenderingFixture
 {
 protected:
 
-  void SpawnOgreSphere(gazebo::rendering::ScenePtr _scene, gazebo::math::Vector3 _pose)
+  void SpawnOgreSphere(gazebo::rendering::ScenePtr _scene, ignition::math::Vector3d _pose)
   {
     Ogre::SceneManager *sceneManager= _scene->OgreSceneManager();
 
@@ -49,10 +50,10 @@ protected:
     obj->setVisibilityFlags(GZ_VISIBILITY_ALL);
     sceneNode->attachObject(obj);
     sceneNode->setVisible(true);
-    sceneNode->setPosition(_pose.x,_pose.y,_pose.z);
+    sceneNode->setPosition(_pose.X(),_pose.Y(),_pose.Z());
   }
 
-  void SpawnOgreCone(gazebo::rendering::ScenePtr _scene, gazebo::math::Vector3 _pose)
+  void SpawnOgreCone(gazebo::rendering::ScenePtr _scene, ignition::math::Vector3d _pose)
   {
     Ogre::SceneManager *sceneManager= _scene->OgreSceneManager();
 
@@ -77,10 +78,10 @@ protected:
     obj->setVisibilityFlags(GZ_VISIBILITY_ALL);
     sceneNode->attachObject(obj);
     sceneNode->setVisible(true);
-    sceneNode->setPosition(_pose.x,_pose.y,_pose.z);
+    sceneNode->setPosition(_pose.X(),_pose.Y(),_pose.Z());
   }
 
-  void SpawnOgreCube(gazebo::rendering::ScenePtr _scene, gazebo::math::Vector3 _pose)
+  void SpawnOgreCube(gazebo::rendering::ScenePtr _scene, ignition::math::Vector3d _pose)
   {
     Ogre::SceneManager *sceneManager= _scene->OgreSceneManager();
 
@@ -105,7 +106,7 @@ protected:
     obj->setVisibilityFlags(GZ_VISIBILITY_ALL);
     sceneNode->attachObject(obj);
     sceneNode->setVisible(true);
-    sceneNode->setPosition(_pose.x,_pose.y,_pose.z);
+    sceneNode->setPosition(_pose.X(),_pose.Y(),_pose.Z());
   }
 
   void ApplyMask(cv::Mat &_image,cv::Mat &_mask)
@@ -310,7 +311,7 @@ TEST_F(Sonar_TEST, SphereDraw)
   //   math::Vector3(0,0,0), math::Vector3(0,0,0),
   //   true, true);
   
-  SpawnOgreSphere(scene,math::Vector3(0,0,1));
+  SpawnOgreSphere(scene,ignition::math::Vector3d(0,0,1));
 
   // common::Time::MSleep(3000);
 
@@ -398,7 +399,7 @@ TEST_F(Sonar_TEST, ConeDraw)
   //   math::Vector3(0,0,0), math::Vector3(0,0,0),
   //   true, true);
   
-  SpawnOgreCone(scene,math::Vector3(0,0,1));
+  SpawnOgreCone(scene,ignition::math::Vector3d(0,0,1));
 
   // common::Time::MSleep(3000);
 

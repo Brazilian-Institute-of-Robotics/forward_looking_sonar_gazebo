@@ -35,7 +35,11 @@ void FLSonarRos::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   std::string worldName = this->sensor->WorldName();
 
   this->world = physics::get_world("default");
+#if GAZEBO_MAJOR_VERSION >= 8
+  parent = this->world->EntityByName(this->sensor->ParentName());
+#else
   parent = this->world->GetEntity(this->sensor->ParentName());
+#endif
 
   GZ_ASSERT(parent, "This parent does not exisst");
 
@@ -99,7 +103,11 @@ void FLSonarRos::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
 
 void FLSonarRos::OnPreRender()
 {
-  this->sonar->PreRender(current->GetWorldCoGPose());
+#if GAZEBO_MAJOR_VERSION >= 8
+  this->sonar->PreRender(current->WorldCoGPose());
+#else
+  this->sonar->PreRender(current->GetWorldCoGPose().Ign());
+#endif
   this->sonar->GetSonarImage();
 }
 
@@ -145,6 +153,3 @@ void FLSonarRos::OnPostRender()
   }
 }
 }  // namespace gazebo
-
-
-

@@ -1,0 +1,5 @@
+repositories:
+  sonar_msgs:
+    type: git
+    url: https://github.com/Brazilian-Institute-of-Robotics/sonar_msgs.git
+    version: master
